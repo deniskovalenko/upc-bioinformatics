@@ -7,9 +7,8 @@ load(filename)
 # 2) How many individuals does the database contain? 
 nrow(X)
 # 2) What percentage of the variants is monomorphic?
-total_vars <- sum(table(unlist(X)))
-monomorphic <- table(unlist(X))[1] + table(unlist(X))[3]
-monomorphic / total_vars * 100 # 96.2 %
+monomorphic <- ncol(Filter(function(y)(length(unique(y))==1), X))
+monomorphic / ncol(X) * 100 # 69.65 %
 # 2) Remove all monomorphic SNPs from the data bases. How many variants remain in the
 # database? 
 heteromorphic <- Filter(function(y)(length(unique(y))>1), X)
@@ -98,6 +97,7 @@ for(i in 1:10){
 
 # 6) List the 10 p-values, together with the 10 p-values of the exact tests. Are the result consistent?
 geno_transposed[1:10,]
+geno_transposed[1:10,c(4,6)]
 # In this case the values are consistent
 
 # 7)  Depict all SNPs simultaeneously in a ternary plot, and comment on your result (because many
@@ -124,6 +124,7 @@ A/B
 # chi vector stores p-val from HWChisq
 pvalues <- unlist(geno_transposed$chi_p)
 hist(pvalues, breaks=20)
+
 
 # 9) What distribution would you expect if HWE would hold for the data set? What distribution do you observe?
 # if pval < 0.05 then it's unlikely that genotype differences are due to chance.
@@ -174,7 +175,7 @@ inbrd_sd   <- sd(geno_transposed$inbrd)   # sd 0.1372449
 inbrd_min  <- min(geno_transposed$inbrd)  # -0.9067086
 inbrd_max  <- max(geno_transposed$inbrd)  # 1
 # What distribution do you think ^f follows? Use a probability plot to confirm your idea
-# At first we thought that it follows normal distribution but it turns out that it is beta distribution:
+# Normal distribution 
 # got help from https://www.statmethods.net/advgraphs/probability.html
 x1 <- seq(-4,4,length=100)*inbrd_sd + inbrd_mean
 hx1 <- dnorm(x1,inbrd_mean,inbrd_sd)
