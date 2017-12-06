@@ -9,11 +9,11 @@ nrow(X)
 # 2) What percentage of the variants is monomorphic?
 total_vars <- sum(table(unlist(X)))
 monomorphic <- table(unlist(X))[1] + table(unlist(X))[3]
-monomorphic / total_vars * 100
+monomorphic / total_vars * 100 # 96.2 %
 # 2) Remove all monomorphic SNPs from the data bases. How many variants remain in the
 # database? 
 heteromorphic <- Filter(function(y)(length(unique(y))>1), X)
-ncol(heteromorphic)
+ncol(heteromorphic) # 3035
 #Determine the genotype counts for these variants, and store them in matrix. 
 geno <- data.frame(matrix(ncol = ncol(heteromorphic), nrow = 3))
 colnames_geno <- colnames(heteromorphic)
@@ -30,19 +30,19 @@ for(name in colnames(heteromorphic)){
 # Hardy-Weinberg equilibrium to each SNP. 
 # transform the geno matrix so that cols are AA, AB, BB and row variants (loci)
 geno_transposed <- as.data.frame(t(geno))
-# add chi column
-geno_transposed$chi <- NA
+# add chi p value column
+geno_transposed$chi_p <- NA
 
 # calc chi values
 for(i in 1:dim(geno_transposed)[1]){
   num_vector <- as.numeric(geno_transposed[i, 1:3])
   names(num_vector) <- c("AA", "AB", "BB")
   chiStatistics <- HWChisq(num_vector,cc=0)
-  geno_transposed$chi[i] <- chiStatistics[2]
+  geno_transposed$chi_p[i] <- chiStatistics[2]
   geno_transposed$allelle_f[i] <- chiStatistics[4]
 }
 # 2) How many SNPs are significant (use ?? = 0.05)?
-nrow(subset(geno_transposed, geno_transposed$chi < 0.05))
+nrow(subset(geno_transposed, geno_transposed$chi_p < 0.05))
 
 
 # 3) How many markers of the remaining non-monomorphic markers would you expect to be out
@@ -66,28 +66,34 @@ nrow(subset(geno_transposed, geno_transposed$HWExact < 0.05))
 # 5) Apply a likelihood ratio test for Hardy-Weinberg equilibrium to each SNP, using the HWLratio function.
 # add HWLratio column
 geno_transposed$HWLratio <- NA
-# calc chi values
+# calc HWLratio values
 for(i in 1:dim(geno_transposed)[1]){
   num_vector <- as.numeric(geno_transposed[i, 1:3])
   names(num_vector) <- c("AA", "AB", "BB")
-  geno_transposed$HWLratio[i] <- HWLratio(num_vector)
+  geno_transposed$HWLratio[i] <- as.numeric(HWLratio(num_vector)[1])
 }
 
-# How many SNPs are significant (use ?? = 0.05). Is the result consistent with the chi-square
-# test?
-nrow(subset(geno_transposed, geno_transposed$HWLratio < 0.05))
-# 99, result not consistent with the chi-square test of 160
+# How many SNPs are significant (use ?? = 0.05). Is the result consistent with the chi-square test?
+geno_transposed$HWLratio_p <- NA
+for(i in 1:dim(geno_transposed)[1]){
+  num_vector <- as.numeric(geno_transposed[i, 1:3])
+  names(num_vector) <- c("AA", "AB", "BB")
+  geno_transposed$HWLratio_p[i] <- as.numeric(HWLratio(num_vector)[3])
+}
+nrow(subset(geno_transposed, geno_transposed$HWLratio_p < 0.05))
+# 145, result is almost consistent with the chi-square test of 160
+# delete this useless column
+geno_transposed$HWLratio_p <- NULL
 
 # 6) Apply a permutation test for Hardy-Weinberg equilibrium to the first 10 SNPs, using the
 # classical chi-square test (without continuity correction) as a test statistic. 
 # add HWPerm column
-geno_transposed$HWPerm <- NA
+geno_transposed$HWPerm_p <- NA
 # calc HWPerm values
 for(i in 1:10){
   num_vector <- as.numeric(geno_transposed[i, 1:3])
   names(num_vector) <- c("AA", "AB", "BB")
-  print(num_vector)
-  geno_transposed$HWPerm[i] <- HWPerm(num_vector, nperm = 1000)[2]
+  geno_transposed$HWPerm_p[i] <- HWPerm(num_vector, nperm = 1000)[2]
 }
 
 # 6) List the 10 p-values, together with the 10 p-values of the exact tests. Are the result consistent?
@@ -105,12 +111,10 @@ HWTernaryPlot(SNPs_geno)
 # all genotype counts
 
 
-
 # 8) Can you explain why half of the ternary diagram is empty?
 A <- sum(geno_transposed[,1]) + 0.5*sum(geno_transposed[,2])
 B <- sum(geno_transposed[,3]) + 0.5*sum(geno_transposed[,2])
 A/B
-
 # There are much more B-alleles in the dataset, 11.13 times more, to be exact. In no examples of the genotype counts
 # do number of B-alleles surpass that of A-alleles
 
@@ -118,7 +122,7 @@ A/B
 
 # 9) Make a histogram of the p-values obtained in the chi-square test
 # chi vector stores p-val from HWChisq
-pvalues <- dim(unlist(geno_transposed$chi))
+pvalues <- unlist(geno_transposed$chi_p)
 hist(pvalues, breaks=20)
 
 # 9) What distribution would you expect if HWE would hold for the data set? What distribution do you observe?
@@ -127,7 +131,7 @@ hist(pvalues, breaks=20)
 
 # 9) make a Q-Q plot of the p values obtained in the chi-square test against the quantiles of the distribution that you consider relevant. 
 qqnorm(pvalues)
-qqline(pvalues,  datax = FALSE, distribution = qlogis(),probs = c(0.25, 0.75), qtype = 7)
+qqline(pvalues,  datax = FALSE, distribution = qlogis() ,probs = c(0.25, 0.75), qtype = 7)
 # 9) What is your conclusion?
 
 
@@ -177,18 +181,28 @@ hx1 <- dnorm(x1,inbrd_mean,inbrd_sd)
 plot(x1, hx1)
 
 
+
 # 12) Make a plot of the observed chi-square statistics agains the inbreeding coefficient ( ^f). 
-chi_mean <- mean(geno_transposed$chi) # mean -0.005368393
-chi_sd   <- sd(geno_transposed$chi)   # sd 0.1372449
-chi_min  <- min(geno_transposed$chi)  # -0.9067086
-chi_max  <- max(geno_transposed$chi)  # 1
+#make chi value column
+geno_transposed$chi_val <- NA
+# calc chi values' p-values
+for(i in 1:dim(geno_transposed)[1]){
+  num_vector <- as.numeric(geno_transposed[i, 1:3])
+  names(num_vector) <- c("AA", "AB", "BB")
+  geno_transposed$chi_val[i] <- as.numeric(HWChisq(num_vector,cc=0)[1])
+}
+
+chi_mean <- mean(geno_transposed$chi_val) # mean 2.01789
+chi_sd   <- sd(geno_transposed$chi_val)   # sd 11.49767
+chi_min  <- min(geno_transposed$chi_val)  # min  4.070658e-05
+chi_max  <- max(geno_transposed$chi_val)  # 107
 # plot the distributions
 x2 <- seq(-4,4,length=100)*chi_sd + chi_mean
 hx2 <- dnorm(x2,chi_mean,chi_sd)
-plot(x2, hx2) # exponential
-plot(x1, hx1) # square equation (parabola)
+plot(x1, hx1) # normal distribution
+plot(x2, hx2) # normal distribution
 # What do you observe? Can you give an equation that relates the two statistics?
-# We wouldn't give the exact equation but it is in relation with chi's logarithm squared
+# both plots have exaclty the same shape but are different with regards to height and width
 
 
 # 13) Make a chi-square probability plot of the observed chi-square statistics against their theoretical quantiles.
@@ -230,7 +244,8 @@ qqplot(unlist(geno_transposed$HWExact), unlist(simulated$pval), ylab = "simulate
 
 # 15) Is genotyping error a problem?
 # In general, the number of markers out of equilibrium is relatively small (126 or 160, compared to expected 150).
-# But we've read that range 5-10% is being considered "aproaching significant", and there are 218 and 183 markers, accrording to Chi test and exaxt test, which isn't significant increase. 
+# But we've read that range 5-10% is being considered "aproaching significant", and there are 218 and 183 markers, 
+# according to Chi test and exact test, which isn't significant increase. 
 # Also, QQ plot for original and simlated data's statistics shows they belong to same distribtion.
 # As relatively small amount of markers are out of equilibrium (compared to expected) we can assume it's due to genotyping error.
 nrow(subset(geno_transposed, geno_transposed$chi < 0.1))
