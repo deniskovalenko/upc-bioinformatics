@@ -4,7 +4,6 @@ library(HardyWeinberg)
 filename = "YRIChr1.rda"
 load(filename)
 #x <- X # for faster typing
-
 # 2) How many individuals does the database contain? 
 nrow(X)
 # 2) What percentage of the variants is monomorphic?
@@ -59,7 +58,9 @@ geno_transposed$HWExact <- HWExactStats(geno_transposed[,1:3])
 nrow(subset(geno_transposed, geno_transposed$HWExact < 0.05))
 # No, the results are a little different:
 # chi significant: 160
-# exact significant. 126
+# exact significant. 126.
+# But compared to 3035 non-monomorfic markers it's insignificant difference, so in general results are consistent.
+#Chi test is closer to expected amount out of equilibrium
 
 
 # 5) Apply a likelihood ratio test for Hardy-Weinberg equilibrium to each SNP, using the HWLratio function.
@@ -206,13 +207,31 @@ for(i in 1:dim(geno_transposed)[1]){
   allelef[i] = (aa+ab/2)/(aa+ab+bb)
 }
 
-# maybe use HwChisq allele frequency instead
-simulated <- HWData(nm = 3035, n = 107, p=allelef)
+# maybe use HwChisq allele frequency instead. Docs says it gives frequency of AA, but in my case it's 1-frequency(AA).. Which is correct? Let's use the library one
+allele_lib <- unlist(geno_transposed$allelle_f)
+simulated <- HWData(nm = 3035, n = 107, p=allele_lib)
 simulated <- data.frame(simulated)
 for(i in 1:dim(simulated)[1]){
   num_vector <- as.numeric(simulated[i, 1:3])
   names(num_vector) <- c("AA", "AB", "BB")
-  simulated$chisq[i] <- HWChisq(num_vector,cc=0)[1]
+  chiStats <- HWChisq(num_vector,cc=0, verbose = FALSE)
+  simulated$pval[i] = chiStats[2]
+  simulated$chisq[i] = chiStats[1]
+  simulated$D[i] = chiStats[3]
+  simulated$p[i] = chiStats[4]
+  simulated$f[i] = chiStats[5]
+  simulated$expected[i] = chiStats[6]
 }
-simulated[1:10,]
 
+simulated[1:10,]
+qqplot(unlist(geno_transposed$HWExact), unlist(simulated$pval), ylab = "simulated", xlab="original")
+
+# from the plot we can see that original and simulated dataset come from same distribution
+
+# 15) Is genotyping error a problem?
+# In general, the number of markers out of equilibrium is relatively small (126 or 160, compared to expected 150).
+# But we've read that range 5-10% is being considered "aproaching significant", and there are 218 and 183 markers, accrording to Chi test and exaxt test, which isn't significant increase. 
+# Also, QQ plot for original and simlated data's statistics shows they belong to same distribtion.
+# As relatively small amount of markers are out of equilibrium (compared to expected) we can assume it's due to genotyping error.
+nrow(subset(geno_transposed, geno_transposed$chi < 0.1))
+nrow(subset(geno_transposed, geno_transposed$HWExact < 0.1))
