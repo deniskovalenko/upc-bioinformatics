@@ -3,18 +3,18 @@ library(genetics)
 library(HardyWeinberg)
 filename = "YRIChr1.rda"
 load(filename)
-
+#x <- X # for faster typing
 
 # 2) How many individuals does the database contain? 
 nrow(X)
 # 2) What percentage of the variants is monomorphic?
 total_vars <- sum(table(unlist(X)))
 monomorphic <- table(unlist(X))[1] + table(unlist(X))[3]
-monomorphic / total_vars * 100 # 96.2 %
+monomorphic / total_vars * 100
 # 2) Remove all monomorphic SNPs from the data bases. How many variants remain in the
 # database? 
 heteromorphic <- Filter(function(y)(length(unique(y))>1), X)
-ncol(heteromorphic) # 3035
+ncol(heteromorphic)
 #Determine the genotype counts for these variants, and store them in matrix. 
 geno <- data.frame(matrix(ncol = ncol(heteromorphic), nrow = 3))
 colnames_geno <- colnames(heteromorphic)
@@ -33,14 +33,17 @@ for(name in colnames(heteromorphic)){
 geno_transposed <- as.data.frame(t(geno))
 # add chi column
 geno_transposed$chi <- NA
-# calc chi values' p-values
+
+# calc chi values
 for(i in 1:dim(geno_transposed)[1]){
   num_vector <- as.numeric(geno_transposed[i, 1:3])
   names(num_vector) <- c("AA", "AB", "BB")
-  geno_transposed$chi[i] <- as.numeric(HWChisq(num_vector,cc=0)[2])
+  chiStatistics <- HWChisq(num_vector,cc=0)
+  geno_transposed$chi[i] <- chiStatistics[2]
+  geno_transposed$allelle_f[i] <- chiStatistics[4]
 }
 # 2) How many SNPs are significant (use ?? = 0.05)?
-nrow(subset(geno_transposed, geno_transposed$chi < 0.05)) # 160
+nrow(subset(geno_transposed, geno_transposed$chi < 0.05))
 
 
 # 3) How many markers of the remaining non-monomorphic markers would you expect to be out
@@ -62,24 +65,17 @@ nrow(subset(geno_transposed, geno_transposed$HWExact < 0.05))
 # 5) Apply a likelihood ratio test for Hardy-Weinberg equilibrium to each SNP, using the HWLratio function.
 # add HWLratio column
 geno_transposed$HWLratio <- NA
-# calc HWLratio values
+# calc chi values
 for(i in 1:dim(geno_transposed)[1]){
   num_vector <- as.numeric(geno_transposed[i, 1:3])
   names(num_vector) <- c("AA", "AB", "BB")
-  geno_transposed$HWLratio[i] <- as.numeric(HWLratio(num_vector)[1])
+  geno_transposed$HWLratio[i] <- HWLratio(num_vector)
 }
 
-# How many SNPs are significant (use ?? = 0.05). Is the result consistent with the chi-square test?
-geno_transposed$HWLratioPs <- NA
-for(i in 1:dim(geno_transposed)[1]){
-  num_vector <- as.numeric(geno_transposed[i, 1:3])
-  names(num_vector) <- c("AA", "AB", "BB")
-  geno_transposed$HWLratioPs[i] <- as.numeric(HWLratio(num_vector)[3])
-}
-nrow(subset(geno_transposed, geno_transposed$HWLratioPs < 0.05))
-# 145, result is almost consistent with the chi-square test of 160
-# delete this useless column
-geno_transposed$HWLratioPs <- NULL
+# How many SNPs are significant (use ?? = 0.05). Is the result consistent with the chi-square
+# test?
+nrow(subset(geno_transposed, geno_transposed$HWLratio < 0.05))
+# 99, result not consistent with the chi-square test of 160
 
 # 6) Apply a permutation test for Hardy-Weinberg equilibrium to the first 10 SNPs, using the
 # classical chi-square test (without continuity correction) as a test statistic. 
@@ -119,10 +115,43 @@ A/B
 
 
 
+# 9) Make a histogram of the p-values obtained in the chi-square test
+# chi vector stores p-val from HWChisq
+pvalues <- dim(unlist(geno_transposed$chi))
+hist(pvalues, breaks=20)
+
+# 9) What distribution would you expect if HWE would hold for the data set? What distribution do you observe?
+# if pval < 0.05 then it's unlikely that genotype differences are due to chance.
+#Beta distribution could be possible one. Null distribution or uniform?
+
+# 9) make a Q-Q plot of the p values obtained in the chi-square test against the quantiles of the distribution that you consider relevant. 
+qqnorm(pvalues)
+qqline(pvalues,  datax = FALSE, distribution = qlogis(),probs = c(0.25, 0.75), qtype = 7)
+# 9) What is your conclusion?
 
 
-
-
+# 10) Imagine that for a particular marker the counts of the two homozygotes are accidentally interchanged. Would this affect the statistical tests for HWE?
+test_geno <- geno_transposed[1:10,]
+tmpAA <- test_geno$AA
+test_geno$AA <- test_geno$BB
+test_geno$BB <- tmpAA
+test_geno$HWExact <- HWExactStats(test_geno[,1:3])
+for(i in 1:10){
+  num_vector <- as.numeric(test_geno[i, 1:3])
+  names(num_vector) <- c("AA", "AB", "BB")
+  test_geno$HWPerm[i] <- HWPerm(num_vector, nperm = 1000, verbose = FALSE)[2]
+  test_geno$HWLratio[i] <- HWLratio(num_vector, verbose = FALSE)
+  chiStats <- HWChisq(num_vector,cc=0, verbose = FALSE)
+  test_geno$pval[i] = chiStats[2]
+  test_geno$chisq[i] = chiStats[1]
+  test_geno$D[i] = chiStats[3]
+  test_geno$p[i] = chiStats[4]
+  test_geno$f[i] = chiStats[5]
+  test_geno$expected[i] = chiStats[6]
+}
+test_geno[1:3,]
+geno_transposed[1:3,]
+#D Doesn't seem like it affects something -> all statistics counted previously doesn't affect results, as well as all outputs from HWChisq(). It makes sense, as we have just replaced labels for A and B, in a nutshell.
 
 # 11)  Compute the inbreeding coefficient ( ^f) for each SNP, and make a histogram of ^f. You can
 #use function HWf for this purpose. 
@@ -143,7 +172,7 @@ inbrd_max  <- max(geno_transposed$inbrd)  # 1
 # At first we thought that it follows normal distribution but it turns out that it is beta distribution:
 # got help from https://www.statmethods.net/advgraphs/probability.html
 x1 <- seq(-4,4,length=100)*inbrd_sd + inbrd_mean
-hx1 <- dnorm(x,inbrd_mean,inbrd_sd)
+hx1 <- dnorm(x1,inbrd_mean,inbrd_sd)
 plot(x1, hx1)
 
 
@@ -154,11 +183,36 @@ chi_min  <- min(geno_transposed$chi)  # -0.9067086
 chi_max  <- max(geno_transposed$chi)  # 1
 # plot the distributions
 x2 <- seq(-4,4,length=100)*chi_sd + chi_mean
-hx2 <- dnorm(x,chi_mean,chi_sd)
+hx2 <- dnorm(x2,chi_mean,chi_sd)
 plot(x2, hx2) # exponential
 plot(x1, hx1) # square equation (parabola)
 # What do you observe? Can you give an equation that relates the two statistics?
 # We wouldn't give the exact equation but it is in relation with chi's logarithm squared
 
 
+# 13) Make a chi-square probability plot of the observed chi-square statistics against their theoretical quantiles.
+
+#Does the sample statistic follow a chi-square distribution?
+
+
+# 14) Simulate SNPs under the assumption of Hardy-Weinberg equilibrium. 
+
+#First, we need to get allele frequencies vector
+allelef <- numeric(3035)
+for(i in 1:dim(geno_transposed)[1]){
+  aa <-geno_transposed[i, 1]
+  ab <-geno_transposed[i,2]
+  bb <-geno_transposed[i,3]
+  allelef[i] = (aa+ab/2)/(aa+ab+bb)
+}
+
+# maybe use HwChisq allele frequency instead
+simulated <- HWData(nm = 3035, n = 107, p=allelef)
+simulated <- data.frame(simulated)
+for(i in 1:dim(simulated)[1]){
+  num_vector <- as.numeric(simulated[i, 1:3])
+  names(num_vector) <- c("AA", "AB", "BB")
+  simulated$chisq[i] <- HWChisq(num_vector,cc=0)[1]
+}
+simulated[1:10,]
 
