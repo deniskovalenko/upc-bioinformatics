@@ -8,7 +8,8 @@ load(filename)
 nrow(X)
 # 2) What percentage of the variants is monomorphic?
 monomorphic <- ncol(Filter(function(y)(length(unique(y))==1), X))
-monomorphic / ncol(X) * 100 # 69.65 %
+monomorphic / ncol(X) * 100
+#69.65%
 # 2) Remove all monomorphic SNPs from the data bases. How many variants remain in the
 # database? 
 heteromorphic <- Filter(function(y)(length(unique(y))>1), X)
@@ -96,8 +97,10 @@ for(i in 1:10){
 }
 
 # 6) List the 10 p-values, together with the 10 p-values of the exact tests. Are the result consistent?
-geno_transposed[1:10,]
-geno_transposed[1:10,c(4,6)]
+tmp <- geno_transposed[1:10,]
+tmp$p_perm = geno_transposed[1:10,]$HWPerm_p
+tmp$p_val<-NULL
+
 # In this case the values are consistent
 
 # 7)  Depict all SNPs simultaeneously in a ternary plot, and comment on your result (because many
@@ -125,7 +128,6 @@ A/B
 pvalues <- unlist(geno_transposed$chi_p)
 hist(pvalues, breaks=20)
 
-
 # 9) What distribution would you expect if HWE would hold for the data set? What distribution do you observe?
 # if pval < 0.05 then it's unlikely that genotype differences are due to chance.
 #Beta distribution could be possible one. Null distribution or uniform?
@@ -141,12 +143,12 @@ test_geno <- geno_transposed[1:10,]
 tmpAA <- test_geno$AA
 test_geno$AA <- test_geno$BB
 test_geno$BB <- tmpAA
-test_geno$HWExact <- HWExactStats(test_geno[,1:3])
+
 for(i in 1:10){
   num_vector <- as.numeric(test_geno[i, 1:3])
   names(num_vector) <- c("AA", "AB", "BB")
   test_geno$HWPerm[i] <- HWPerm(num_vector, nperm = 1000, verbose = FALSE)[2]
-  test_geno$HWLratio[i] <- HWLratio(num_vector, verbose = FALSE)
+  test_geno$HWLratio[i] <- HWLratio(num_vector, verbose = FALSE)[3]
   chiStats <- HWChisq(num_vector,cc=0, verbose = FALSE)
   test_geno$pval[i] = chiStats[2]
   test_geno$chisq[i] = chiStats[1]
@@ -154,10 +156,12 @@ for(i in 1:10){
   test_geno$p[i] = chiStats[4]
   test_geno$f[i] = chiStats[5]
   test_geno$expected[i] = chiStats[6]
+  #test_geno$exact_p[i] = HWExactStats(num_vector)
 }
 test_geno[1:3,]
 geno_transposed[1:3,]
 #D Doesn't seem like it affects something -> all statistics counted previously doesn't affect results, as well as all outputs from HWChisq(). It makes sense, as we have just replaced labels for A and B, in a nutshell.
+#But from documents of HWExactStats genotype counts must be in order AA, AB, BB. 
 
 # 11)  Compute the inbreeding coefficient ( ^f) for each SNP, and make a histogram of ^f. You can
 #use function HWf for this purpose. 
@@ -175,7 +179,7 @@ inbrd_sd   <- sd(geno_transposed$inbrd)   # sd 0.1372449
 inbrd_min  <- min(geno_transposed$inbrd)  # -0.9067086
 inbrd_max  <- max(geno_transposed$inbrd)  # 1
 # What distribution do you think ^f follows? Use a probability plot to confirm your idea
-# Normal distribution 
+# At first we thought that it follows normal distribution but it turns out that it is beta distribution:
 # got help from https://www.statmethods.net/advgraphs/probability.html
 x1 <- seq(-4,4,length=100)*inbrd_sd + inbrd_mean
 hx1 <- dnorm(x1,inbrd_mean,inbrd_sd)
@@ -249,5 +253,6 @@ qqplot(unlist(geno_transposed$HWExact), unlist(simulated$pval), ylab = "simulate
 # according to Chi test and exact test, which isn't significant increase. 
 # Also, QQ plot for original and simlated data's statistics shows they belong to same distribtion.
 # As relatively small amount of markers are out of equilibrium (compared to expected) we can assume it's due to genotyping error.
-nrow(subset(geno_transposed, geno_transposed$chi < 0.1))
+nrow(subset(geno_transposed, geno_transposed$chi_p < 0.1))
 nrow(subset(geno_transposed, geno_transposed$HWExact < 0.1))
+
