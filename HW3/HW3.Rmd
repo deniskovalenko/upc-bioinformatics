@@ -104,12 +104,31 @@ res$`P-value`
 No, there is no significant association between these two SNPs because the p-value is too high (above our threshold of 5 %)
 
 
+## Task5 (2p)
+#### Given your previous estimate of D, and using the formulae from the lecture slides, compute the statistics D', ??2, R2 and r by hand for the first pair of SNPs. Do your results coincide with those obtained by the LD function? Can you explain possible differences? - nope, cannot
 ```{r echo=FALSE}
+print(geno_loci[1:2,])
 
+table(SNP1g)
+table(SNP2g)
 
+# f(GG) = 68/90
+# f(AA) = 1/90
+
+# D' = D/f(AA) = 1.440776
+# hmm...
+
+# X2
+
+# r2 = D2 / (p1p2q1q2) = 2.247896
+# r = 1.499299
 
 ```
 
+
+
+## Task5
+####  Given your previous estimate of D, infer the haplotype frequencies. Which haplotype is the most common?
 
 ```{r echo=FALSE}
 
