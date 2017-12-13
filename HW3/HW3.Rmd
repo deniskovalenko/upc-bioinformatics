@@ -1,0 +1,140 @@
+---
+title: "BSG HW3"
+author: "Sten-Oliver Salumaa, Denis Kovalenko"
+date: "13 December 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Task1
+The file ABO-CHB.rda contains genotype information of individuals of a Chinese population of unrelated
+individuals. The genotype information concerns SNPs the ABO bloodgroup region, located
+on chromosome number 9. The file contains genotype information (Z, individuals in columns, SNPs
+in rows), the physical position of each SNP (pos) and the alleles for each SNP (alleles). Load
+this data into the R environment
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Load the data
+library(genetics)
+library(HardyWeinberg)
+filename = "ABO-CHB.rda"
+load(filename)
+```
+
+
+## Task2 (1p)
+How many individuals and how many SNPs are there in the database?
+
+```{r echo=FALSE}
+print("Individual count:")
+ncol(Z)
+print("SNP count:")
+nrow(Z)
+```
+What percentage of the data is missing?
+
+```{r echo=FALSE}
+total <- ncol(Z)*nrow(Z)
+nas <- length(Z[is.na(Z)])
+nas/total*100
+```
+
+## Task3 (1p)
+Depict all SNPs simultaeneously in a ternary plot, and comment on your result. Do you
+believe Hardy-Weinberg equilibrium is tenable for the markers in this database?
+
+```{r echo=FALSE}
+# transpose the data to make it more logical
+Zt <- t(Z)
+
+# create a map function for groupgenotypes
+map <- list("AA"=c("A/A"),
+            "TT"=c("T/T"),
+            "CC"=c("C/C"),
+            "GG"=c("G/G"),
+            "AB"=".else")
+
+geno_loci <- data.frame(AA = numeric(0), AB = numeric(0), BB = numeric(0))
+for(i in 1:ncol(Zt)){
+  # genotype counts table as AA, AB, and BB
+  #print(expectedGenotypes(genotype(Zt[,i], sep=""), ploidy=2))
+  genocounts <- table(groupGenotype(x=genotype(Zt[,i], sep=""), map=map, factor=FALSE))
+  #print(genocounts)
+  #print(names(genocounts))
+  #passing genotype counts to table
+  if(length(genocounts)==3){
+    geno_loci[i,"AB"] <- genocounts["AB"]  
+    genocounts <- genocounts[names(genocounts) != "AB"]
+    geno_loci[i, "AA"] <- genocounts[1]
+    geno_loci[i, "BB"] <- genocounts[2]
+  }else if(length(genocounts)==2){
+    geno_loci[i,"AB"] <- genocounts["AB"]  
+    genocounts <- genocounts[names(genocounts) != "AB"]
+    geno_loci[i, "AA"] <- genocounts[1]
+  }else if(length(genocounts)==1){
+    geno_loci[i,"AB"] <- genocounts["AB"]  
+    genocounts <- genocounts[names(genocounts) != "AB"]
+    geno_loci[i, "AA"] <- genocounts[1]
+  }
+
+}
+
+# replace n.a.-s
+geno_loci[is.na(geno_loci)] <- 0
+# plot the thing
+HWTernaryPlot(geno_loci)
+```
+
+Yes, it seems that HW equilibrium is tenable for this database since almost all of the data points reside in the equilibrium boundaries.
+
+
+
+
+```{r echo=FALSE}
+
+
+
+```
+
+```{r echo=FALSE}
+
+
+
+```
+
+
+```{r echo=FALSE}
+
+
+
+```
+
+
+```{r echo=FALSE}
+
+
+
+```
+
+
+```{r echo=FALSE}
+
+
+
+```
+
+
+```{r echo=FALSE}
+
+
+
+```
+
+```{r echo=FALSE}
+
+
+
+```
