@@ -10,11 +10,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Task1
-The file ABO-CHB.rda contains genotype information of individuals of a Chinese population of unrelated
-individuals. The genotype information concerns SNPs the ABO bloodgroup region, located
-on chromosome number 9. The file contains genotype information (Z, individuals in columns, SNPs
-in rows), the physical position of each SNP (pos) and the alleles for each SNP (alleles). Load
-this data into the R environment
+#### The file ABO-CHB.rda contains genotype information of individuals of a Chinese population of unrelated individuals. The genotype information concerns SNPs the ABO bloodgroup region, located on chromosome number 9. The file contains genotype information (Z, individuals in columns, SNPs in rows), the physical position of each SNP (pos) and the alleles for each SNP (alleles). Load this data into the R environment.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 # Load the data
@@ -26,7 +22,7 @@ load(filename)
 
 
 ## Task2 (1p)
-How many individuals and how many SNPs are there in the database?
+#### How many individuals and how many SNPs are there in the database?
 
 ```{r echo=FALSE}
 print("Individual count:")
@@ -34,7 +30,7 @@ ncol(Z)
 print("SNP count:")
 nrow(Z)
 ```
-What percentage of the data is missing?
+#### What percentage of the data is missing?
 
 ```{r echo=FALSE}
 total <- ncol(Z)*nrow(Z)
@@ -43,8 +39,7 @@ nas/total*100
 ```
 
 ## Task3 (1p)
-Depict all SNPs simultaeneously in a ternary plot, and comment on your result. Do you
-believe Hardy-Weinberg equilibrium is tenable for the markers in this database?
+#### Depict all SNPs simultaeneously in a ternary plot, and comment on your result. Do you believe Hardy-Weinberg equilibrium is tenable for the markers in this database?
 
 ```{r echo=FALSE}
 # transpose the data to make it more logical
@@ -91,13 +86,23 @@ HWTernaryPlot(geno_loci)
 Yes, it seems that HW equilibrium is tenable for this database since almost all of the data points reside in the equilibrium boundaries.
 
 
+## Task4 (1p)
 
+#### Using the function LD from the genetics package, compute the LD statistic D for the first two SNPs in the database. Is there significant association between these two SNPs?
 
 ```{r echo=FALSE}
 
+SNP1g <- genotype(Zt[,1],sep="")
+SNP2g <- genotype(Zt[,2],sep="")
 
+res <- LD(SNP1g,SNP2g)
+res
+print("P-value:")
+res$`P-value`
 
 ```
+No, there is no significant association between these two SNPs because the p-value is too high (above our threshold of 5 %)
+
 
 ```{r echo=FALSE}
 
