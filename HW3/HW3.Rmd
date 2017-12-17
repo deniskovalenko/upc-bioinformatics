@@ -154,15 +154,34 @@ DnCalc = Dcalc/Dmax
 
 
 ```
-
+## Task 7 (2p)
+### Compute 4 LD statistics for all the marker pairs in this data base (D, D', χ2 and R2). Make
+#a scatterplot matrix of these. Is there an exact linear relationship between χ2 and R2 ? Why (not) so?
 
 ```{r echo=FALSE}
+p<-NULL
+l <- ncol(Zt)-1
+c = 1
+for(i in 1:l) {
+  for(j in i:ncol(Zt)) {
+    SNP1gTmp <- genotype(Zt[,i],sep="")
+    SNP2gTmp <- genotype(Zt[,j],sep="")
+    resTmp <- LD(SNP1gTmp,SNP2gTmp)
+    p$D[c] <- resTmp$D
+    p$`D'`[c] <- resTmp$`D'`
+    p$`R^2`[c] <- resTmp$`R^2`
+    p$`X^2`[c] <- resTmp$`X^2`
+    c = c+1
+  }
+}
 
-
-
+pairs(p)
 ```
 
 
+There is linear relationship between X^2 and R^2 (line in form y=x).
+
+TODO why?
 ```{r echo=FALSE}
 
 
