@@ -324,11 +324,23 @@ for(i in 1:nrow(simulated)){
     #print(generated_row)
     
   }
-  sim_df <- cbind(sim_df, data.frame(genotype(generated_row)))
+  sim_df <- cbind(sim_df, data.frame(genotype(generated_row, sep = "")))
 }
 
+
+RES3 <- data.frame(genotype(sim_df[,1]))
+
+for(i in 2:ncol(sim_df)) {
+   snp <- genotype(sim_df[,i])
+   RES3 <- cbind(RES3,snp)
+}
+colnames(RES3) <- 1:45
+output <- LD(RES3)
+
+
 rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
-LDheatmap(simulated, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
+LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
+LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
 
 as.genotype(simulated[1,])
 
