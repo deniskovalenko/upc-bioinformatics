@@ -242,9 +242,9 @@ for(i in 2:ncol(Zt)) {
    snp <- genotype(Zt[,i],sep="")
    RES <- cbind(RES,snp)
 }
+colnames(RES) <- 1:45
 output <- LD(RES)
 
-output
 dim(output)
 rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
 LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
@@ -253,7 +253,7 @@ LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, titl
 
 ```{r echo=FALSE}
 LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
-```
+  ```
 ### Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
 
 ## Task 10. (2p) 
