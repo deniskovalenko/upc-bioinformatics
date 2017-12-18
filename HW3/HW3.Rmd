@@ -253,7 +253,8 @@ LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, titl
 
 ```{r echo=FALSE}
 LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
-  ```
+```
+  
 ### Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
 
 ## Task 10. (2p) 
@@ -263,9 +264,18 @@ LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title
 
 ```{r echo=FALSE}
 
-
+for(i in 1:rows(simulated)) {
+  row <- simulated[i,]
+  vec 
+  for(j in 1:length(row)) {
+    snp <- colnames(simulated)[j]
+    vec<- vec + rep(snp, row[j])
+  }
+}
 
 ```
 
 ## Task 11 (1p) 
 ####Do you think there is strong or weak LD for the ABO region you just studied? Explain your opinion
+
+#### I would say that LD is present, and we have several clusters of coupled SNPs. 
