@@ -243,25 +243,18 @@ for(i in 2:ncol(Zt)) {
 }
 
 dim(RES)
-
+RES
 output <- LD(RES)
 
-Dm <- output$D
-Dp <- output$"D'"
-R2 <- output$"R^2"
-X2 <- output$"X^2"
-
-Dm[1:10,1:10]
-
-Dm <- Dm[upper.tri(Dm)]
-Dp <- Dp[upper.tri(Dp)]
-R2 <- R2[upper.tri(R2)]
-X2 <- X2[upper.tri(X2)]
-
 rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
-LDheatmap(output$`D'`, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
-LDheatmap(output$`R^2`,LDmeasure="r", add.map=TRUE, title="R^2 LD heatmap",color=rgb.palette(18))
+class(output)
+LDheatmap(RES, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
+
 ```
+```{r echo=FALSE}
+LDheatmap(RES,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
+```
+
 
 ```{r echo=FALSE}
 
