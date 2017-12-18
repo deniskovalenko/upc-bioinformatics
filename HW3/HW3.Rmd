@@ -1,6 +1,6 @@
 ---
 title: "BSG HW3"
-author: "Sten-Oliver Salumaa, Denis Kovalenko"
+author: "Sten-Oliver Salumaa, Denys Kovalenko"
 date: "13 December 2017"
 output: html_document
 ---
@@ -16,6 +16,8 @@ knitr::opts_chunk$set(echo = FALSE)
 # Load the data
 library(genetics)
 library(HardyWeinberg)
+library(LDheatmap)
+
 filename = "ABO-CHB.rda"
 load(filename)
 ```
@@ -42,7 +44,7 @@ nas/total*100
 #### Depict all SNPs simultaeneously in a ternary plot, and comment on your result. Do you believe Hardy-Weinberg equilibrium is tenable for the markers in this database?
 
 ```{r echo=FALSE}
-# transpose the data to make it more logical
+# transpose the data to make it more logical form -  rows per individuals
 Zt <- t(Z)
 
 # create a map function for groupgenotypes
@@ -101,16 +103,35 @@ print("P-value:")
 res$`P-value`
 
 ```
-No, there is no significant association between these two SNPs because the p-value is too high (above our threshold of 5 %)
+D' is close to 1, so first assumption is that we might have high LD.
+But we think there is no significant association between these two SNPs because the p-value is too high (above our threshold of 5 %)
+
+
+
 
 
 ## Task5 (2p)
-#### Given your previous estimate of D, and using the formulae from the lecture slides, compute the statistics D', ??2, R2 and r by hand for the first pair of SNPs. Do your results coincide with those obtained by the LD function? Can you explain possible differences? - nope, cannot
+#### Given your previous estimate of D, and using the formulae from the lecture slides, compute the statistics D', Chi2, R2 and r by hand for the first pair of SNPs. Do your results coincide with those obtained by the LD function? Can you explain possible differences?
+
+#nice example http://pbgworks.org/sites/pbgworks.org/files/measuresoflinkagedisequilibrium-111119214123-phpapp01_0.pdf
 ```{r echo=FALSE}
 print(geno_loci[1:2,])
 
 table(SNP1g)
 table(SNP2g)
+
+#D = p(AB) - pA*pB -> A = G in 1st SNP, a = A in 1st SNP, B = G in 2nd SNP, b = A in 2nd SNP
+Dcalc = 68/90 - (80/90)*(77/90)# -> 68/90
+print("Calculated D:")
+Dcalc
+#Dmax = min(pApB, papb)
+pApB=80/90*77/90
+papb = 10/90*13/90
+Dmax = papb
+DnCalc = Dcalc/Dmax
+# -0.307, doesn't show high LD...
+
+TODO calc others based on new ones
 
 # f(GG) = 68/90
 # f(AA) = 1/90
@@ -127,14 +148,118 @@ table(SNP2g)
 
 
 
-## Task5
+## Task 6 (2p)
 ####  Given your previous estimate of D, infer the haplotype frequencies. Which haplotype is the most common?
 
 ```{r echo=FALSE}
-
+#I haven't understood yet how it's done. INternet doesn't help much, probably we can use several equations (one which binds P(AG), P(GG), P(A) wit D, and other that say that some frequencies sum up to 1).
 
 
 ```
+## Task 7 (2p)
+### Compute 4 LD statistics for all the marker pairs in this data base (D, D', χ2 and R2). Make
+#a scatterplot matrix of these. Is there an exact linear relationship between χ2 and R2 ? Why (not) so?
+
+```{r echo=FALSE}
+p<-NULL
+l <- ncol(Zt)-1
+c = matrix(data = 0, nrow=nrow(Zt), ncol=ncol(Zt))
+for(i in 1:l) {
+  for(j in i:ncol(Zt)) {
+    SNP1gTmp <- genotype(Zt[,i],sep="")
+    SNP2gTmp <- genotype(Zt[,j],sep="")
+    resTmp <- LD(SNP1gTmp,SNP2gTmp)
+    p$D[c] <- resTmp$D
+    p$`D'`[c] <- resTmp$`D'`
+    p$`R^2`[c] <- resTmp$`R^2`
+    p$`X^2`[c] <- resTmp$`X^2`
+    c = c+1
+  }
+}
+
+pairs(p)
+```
+
+
+There is linear relationship between X^2 and R^2 (line in form y=x).
+
+TODO why?
+
+## Task 8. (2p) Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs. Make a plot of the R2 statistics against the distance between the markers. Comment on your results
+
+```{r echo=FALSE}
+distance <- function(x,y) {
+  if (is.na(x) || is.na(y)) {
+    return (0)
+  }
+  ly <- nchar(y)
+  lx <- nchar(x)
+  min <- min(ly,lx)
+  delta = 0
+  for (i in 1:min) {
+    if (substr(x, i,i)!=substr(y, i, i)) {
+      delta = delta + 1
+    }
+  }
+  return(delta)
+}
+
+snpDistance <- function(snp1, snp2) {
+  d = 0
+  for (i in 1:length(snp1)) {
+    d = d + distance(snp1[i], snp2[i])
+  }
+  return (d)
+}
+distance_matrix <- matrix(data = NA, nrow = nrow(Zt), ncol= ncol(Zt))
+r2_matrix <- matrix(data = 0, nrow = nrow(Zt), ncol= ncol(Zt))
+for(i in 1:ncol(Zt)) {
+  for(j in 1:ncol(Zt)) {
+    distance_matrix[i,j] = snpDistance(Zt[,i], Zt[,j])
+    r2_matrix[i,j] <- LD(genotype(Zt[,i],sep=""),genotype(Zt[,j],sep=""))$`R^2`
+  }
+}
+r2 <- r2_matrix[upper.tri(r2_matrix)]
+dist <- distance_matrix[upper.tri(distance_matrix)]
+
+plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
+```
+#### Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen "skip NA approach"
+
+
+TODO R^2 and distance ....
+
+
+## Task 9. (2p) 
+#### Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using R^2 the D' statistic, and use the positional information on the markers. Are the results consistent? 
+
+#### ... we don't have SNPs labels here as it was in lecture.
+
+```{r echo=FALSE}
+RES <- data.frame(genotype(Zt[,1],sep=""))
+
+for(i in 2:ncol(Zt)) {
+   snp <- genotype(Zt[,i],sep="")
+   RES <- cbind(RES,snp)
+}
+
+dim(RES)
+rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
+LDheatmap(RES, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
+
+```
+
+```{r echo=FALSE}
+LDheatmap(RES,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
+```
+# Results are incosistent - with D' we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
+
+## Task 10. (2p) 
+
+#### Simulate 45 independent SNPs under the assumption of Hardy-Weinberg equilibrium. Simulate as many SNPs as #### you have in your database, and take care to match each SNP in your database
+#### with a simulated SNP that has the same sample size and allele frequency. Make two LD heatmaps
+#### of the simulated SNPs, one using R^2 and one using D'. Compare these to the LD heatmap of the
+#### ABO region. What do you observe? State your conclusions
 
 
 ```{r echo=FALSE}
@@ -143,22 +268,4 @@ table(SNP2g)
 
 ```
 
-
-```{r echo=FALSE}
-
-
-
-```
-
-
-```{r echo=FALSE}
-
-
-
-```
-
-```{r echo=FALSE}
-
-
-
-```
+## (1p) Do you think there is strong or weak LD for the ABO region you just studied? Explain your opinion
