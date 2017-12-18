@@ -185,8 +185,7 @@ There is linear relationship between X^2 and R^2 (line in form y=x).
 
 TODO why?
 
-## Task 8. (2p) Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs.
-# Make a plot of the R2 statistics against the distance between the markers. Comment on your results
+## Task 8. (2p) Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs. Make a plot of the R2 statistics against the distance between the markers. Comment on your results
 
 ```{r echo=FALSE}
 distance <- function(x,y) {
@@ -225,16 +224,16 @@ dist <- distance_matrix[upper.tri(distance_matrix)]
 
 plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
 ```
-# Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen "skip NA approach"
+#### Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen "skip NA approach"
 
 
 TODO R^2 and distance ....
 
 
-## Task 9. (2p) Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using
-# R^2 the D' statistic, and use the positional information on the markers. Are the results consistent? 
+## Task 9. (2p) 
+#### Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using R^2 the D' statistic, and use the positional information on the markers. Are the results consistent? 
 
-# ... we don't have SNPs labels here as it was in lecture.
+#### ... we don't have SNPs labels here as it was in lecture.
 
 ```{r echo=FALSE}
 RES <- data.frame(genotype(Zt[,1],sep=""))
@@ -255,11 +254,12 @@ LDheatmap(RES,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDh
 ```
 # Results are incosistent - with D' we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
 
-# Task 10. (2p) Simulate 45 independent SNPs under the assumption of Hardy-Weinberg equilibrium. Simulate
-# as many SNPs as you have in your database, and take care to match each SNP in your database
-# with a simulated SNP that has the same sample size and allele frequency. Make two LD heatmaps
-# of the simulated SNPs, one using R^2 and one using D'. Compare these to the LD heatmap of the
-# ABO region. What do you observe? State your conclusions
+## Task 10. (2p) 
+
+#### Simulate 45 independent SNPs under the assumption of Hardy-Weinberg equilibrium. Simulate as many SNPs as #### you have in your database, and take care to match each SNP in your database
+#### with a simulated SNP that has the same sample size and allele frequency. Make two LD heatmaps
+#### of the simulated SNPs, one using R^2 and one using D'. Compare these to the LD heatmap of the
+#### ABO region. What do you observe? State your conclusions
 
 
 ```{r echo=FALSE}
@@ -267,3 +267,5 @@ LDheatmap(RES,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDh
 
 
 ```
+
+## (1p) Do you think there is strong or weak LD for the ABO region you just studied? Explain your opinion
