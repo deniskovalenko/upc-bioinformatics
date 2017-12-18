@@ -44,7 +44,7 @@ nas/total*100
 #### Depict all SNPs simultaeneously in a ternary plot, and comment on your result. Do you believe Hardy-Weinberg equilibrium is tenable for the markers in this database?
 
 ```{r echo=FALSE}
-# transpose the data to make it more logical
+# transpose the data to make it more logical form -  rows per individuals
 Zt <- t(Z)
 
 # create a map function for groupgenotypes
@@ -232,7 +232,9 @@ TODO R^2 and distance ....
 
 
 ## Task 9. (2p) Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using
-# R^2 the D' statistic, and use the positional information on the markers. Are the results consistent? . .
+# R^2 the D' statistic, and use the positional information on the markers. Are the results consistent? 
+
+# ... we don't have SNPs labels here as it was in lecture.
 
 ```{r echo=FALSE}
 RES <- data.frame(genotype(Zt[,1],sep=""))
@@ -254,6 +256,13 @@ LDheatmap(RES, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD
 ```{r echo=FALSE}
 LDheatmap(RES,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
 ```
+# Results are incosistent - with D' we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
+
+# Task 10. (2p) Simulate 45 independent SNPs under the assumption of Hardy-Weinberg equilibrium. Simulate
+# as many SNPs as you have in your database, and take care to match each SNP in your database
+# with a simulated SNP that has the same sample size and allele frequency. Make two LD heatmaps
+# of the simulated SNPs, one using R^2 and one using D'. Compare these to the LD heatmap of the
+# ABO region. What do you observe? State your conclusions
 
 
 ```{r echo=FALSE}
