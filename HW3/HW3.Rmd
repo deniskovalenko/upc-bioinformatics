@@ -121,26 +121,30 @@ table(SNP1g)
 table(SNP2g)
 
 #D = p(AB) - pA*pB -> A = G in 1st SNP, a = A in 1st SNP, B = G in 2nd SNP, b = A in 2nd SNP
-Dcalc = 68/90 - (157/180)*(157/180)# -> 68/90
+Dcalc = 68/90 - (80/90)*(77/90)# -> 68/90
 print("Calculated D:")
 Dcalc
+#Dmax = min(pApB, papb)
+pApB=80/90*77/90
+papb = 10/90*13/90
+Dmax = papb
+DnCalc = Dcalc/Dmax
+# -0.307, doesn't show high LD...
 
-pApB=(157/180)*(157/180)
-papb <- 23/180*23/180
-Dmax <- min(pApB, papb)
-Dmax
-D_p <- Dcalc/Dmax
-D_p
-# -0.3194707, doesn't show high LD...
+TODO calc others based on new ones
 
-r2 <- Dcalc^2 / (pApB*papb)
-r2
+# f(GG) = 68/90
+# f(AA) = 1/90
 
-# X^2
-X2 <- r2 * 2*nrow(Zt)
-X2
+# D' = D/f(AA) = 1.440776
+# hmm...
+
+# X2
+
+# r2 = D2 / (p1p2q1q2) = 2.247896
+# r = 1.499299
+
 ```
-Differences for D occur because we used a small sample for our calculations (we read that with small sample size D' can be inflated).
 
 
 
@@ -149,29 +153,12 @@ Differences for D occur because we used a small sample for our calculations (we 
 
 ```{r echo=FALSE}
 #I haven't understood yet how it's done. INternet doesn't help much, probably we can use several equations (one which binds P(AG), P(GG), P(A) wit D, and other that say that some frequencies sum up to 1).
-#P11 = P(GG) = p(G)*p(G) + D
-#P22 = P(AA) = p(A)*p(A) + D
-#P12 = P(GA) = p(G)*p(A) - D
-#P21 = P(AG) = p(A)*p(G) - D
-
-D <- Dcalc
-
-P11 <- (157/180)**2 + D
-P22 <- (23/180)**2 + D
-P12 <- (157/180)*(23/180) - D
-P21 <-(157/180)*(23/180) - D
-
 
 
 ```
-Most common is GG gaplotype.
-
-
-
-
 ## Task 7 (2p)
-### Compute 4 LD statistics for all the marker pairs in this data base (D, D', Ï2 and R2). Make
-#a scatterplot matrix of these. Is there an exact linear relationship between Ï2 and R2 ? Why (not) so?
+### Compute 4 LD statistics for all the marker pairs in this data base (D, D', Ï‡2 and R2). Make
+#a scatterplot matrix of these. Is there an exact linear relationship between Ï‡2 and R2 ? Why (not) so?
 
 ```{r echo=FALSE}
 p<-NULL
@@ -194,9 +181,8 @@ pairs(p)
 ```
 
 
-There is linear relationship between X^2 and R^2 (line in form y=x).
+There is linear relationship between X^2 and R^2 (line in form y=x). By definition, X2 and R2 are tied by equation R2=X2/2n (number of chromosomes)
 
-TODO why?
 
 ## Task 8. (2p) Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs. Make a plot of the R2 statistics against the distance between the markers. Comment on your results
 
@@ -236,16 +222,16 @@ r2 <- r2_matrix[upper.tri(r2_matrix)]
 dist <- distance_matrix[upper.tri(distance_matrix)]
 
 plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
-
 ```
 #### Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen "skip NA approach"
+#### There is no clear trend (correlation) between distance between SNPs char-wise and R^2. Which means that having very similar SNPs doesn't affect LD between them.
 
 
 TODO R^2 and distance ....
 
 
 ## Task 9. (2p) 
-#### Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using the D' statistic, and use the positional information on the markers. Are the results consistent? 
+#### Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using R^2 the D' statistic, and use the positional information on the markers. Are the results consistent? 
 
 #### ... we don't have SNPs labels here as it was in lecture.
 
@@ -256,82 +242,30 @@ for(i in 2:ncol(Zt)) {
    snp <- genotype(Zt[,i],sep="")
    RES <- cbind(RES,snp)
 }
-
+colnames(RES) <- 1:45
 output <- LD(RES)
 
-Dm <- output$D
-Dp <- output$"D'"
-R2 <- output$"R^2"
-X2 <- output$"X^2"
-
-Dm[1:10,1:10]
-
-Dm <- Dm[upper.tri(Dm)]
-Dp <- Dm[upper.tri(Dp)]
-R2 <- Dm[upper.tri(R2)]
-X2 <- Dm[upper.tri(X2)]
-
-Dm
-pairs(cbind(Dm,Dp,R2,X2))
-
-
-#LDheatmap(RES, LDmeasure = "D'",color=rgb.palette(18))
-
-#dim(RES)
+dim(output)
 rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
-LDheatmap(RES, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
+LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
 
 ```
 
 ```{r echo=FALSE}
-LDheatmap(RES,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
-```
-# Results are incosistent - with D' we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
+LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
+  ```
+### Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
 
 ## Task 10. (2p) 
 
-#### Simulate 45 independent SNPs under the assumption of Hardy-Weinberg equilibrium. Simulate as many SNPs as #### you have in your database, and take care to match each SNP in your database
-#### with a simulated SNP that has the same sample size and allele frequency. Make two LD heatmaps
-#### of the simulated SNPs, one using R^2 and one using D'. Compare these to the LD heatmap of the
-#### ABO region. What do you observe? State your conclusions
+#### Simulate 45 independent SNPs under the assumption of Hardy-Weinberg equilibrium. Simulate as many SNPs as you have in your database, and take care to match each SNP in your database with a simulated SNP that has the same sample size and allele frequency. Make two LD heatmaps of the simulated SNPs, one using R^2 and one using D'. Compare these to the LD heatmap of the ABO region. What do you observe? State your conclusions
 
 
 ```{r echo=FALSE}
 
-HWsimulated <- HWData(45,45)
 
-allelef <- numeric(45)
-for(i in 1:dim(geno_loci)[1]){
-  aa <-geno_loci[i, 1]
-  ab <-geno_loci[i,2]
-  bb <-geno_loci[i,3]
-  allelef[i] = (aa+ab/2)/(aa+ab+bb)
-}
-
-
-simulated <- HWData(nm = 45, n = 45, p=allelef)
-
-sim_df <- data.frame(row.names = 1:45)
-for(i in 1:nrow(simulated)){
-  generated_row
-  row <- simulated[i,]
-  for(j in 1:length(row)){
-    
-    snp <- colnames(simulated)[j]
-    reps <- rep(snp, row[j])
-    append(generated_row, reps)
-    #append(x,reps)
-    #print(generated_row)
-    
-  }
-  sim_df <- cbind(sim_df, data.frame(genotype(generated_row)))
-}
-
-rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
-LDheatmap(simulated, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
-
-as.genotype(simulated[1,])
 
 ```
 
-## (1p) Do you think there is strong or weak LD for the ABO region you just studied? Explain your opinion
+## Task 11 (1p) 
+####Do you think there is strong or weak LD for the ABO region you just studied? Explain your opinion
