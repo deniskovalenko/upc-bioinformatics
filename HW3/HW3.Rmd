@@ -163,7 +163,7 @@ TODO calc others based on new ones
 ```{r echo=FALSE}
 p<-NULL
 l <- ncol(Zt)-1
-c = matrix(data = 0, nrow=nrow)
+c = matrix(data = 0, nrow=nrow(Zt), ncol=ncol(Zt))
 for(i in 1:l) {
   for(j in i:ncol(Zt)) {
     SNP1gTmp <- genotype(Zt[,i],sep="")
@@ -230,10 +230,37 @@ plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
 
 TODO R^2 and distance ....
 
+
+## Task 9. (2p) Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using
+# R^2 the D' statistic, and use the positional information on the markers. Are the results consistent? . .
+
 ```{r echo=FALSE}
+RES <- data.frame(genotype(Zt[,1],sep=""))
 
+for(i in 2:ncol(Zt)) {
+   snp <- genotype(Zt[,i],sep="")
+   RES <- cbind(RES,snp)
+}
 
+dim(RES)
 
+output <- LD(RES)
+
+Dm <- output$D
+Dp <- output$"D'"
+R2 <- output$"R^2"
+X2 <- output$"X^2"
+
+Dm[1:10,1:10]
+
+Dm <- Dm[upper.tri(Dm)]
+Dp <- Dp[upper.tri(Dp)]
+R2 <- R2[upper.tri(R2)]
+X2 <- X2[upper.tri(X2)]
+
+rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
+LDheatmap(output$`D'`, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
+LDheatmap(output$`R^2`,LDmeasure="r", add.map=TRUE, title="R^2 LD heatmap",color=rgb.palette(18))
 ```
 
 ```{r echo=FALSE}
