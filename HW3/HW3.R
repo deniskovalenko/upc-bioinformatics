@@ -3,3 +3,5 @@ library(genetics)
 library(HardyWeinberg)
 filename = "ABO-CHB.rda"
 load(filename)
+
+
