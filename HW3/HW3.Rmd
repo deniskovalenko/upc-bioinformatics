@@ -131,6 +131,8 @@ Dmax = papb
 DnCalc = Dcalc/Dmax
 # -0.307, doesn't show high LD...
 
+TODO calc others based on new ones
+
 # f(GG) = 68/90
 # f(AA) = 1/90
 
@@ -150,7 +152,7 @@ DnCalc = Dcalc/Dmax
 ####  Given your previous estimate of D, infer the haplotype frequencies. Which haplotype is the most common?
 
 ```{r echo=FALSE}
-
+#I haven't understood yet how it's done. INternet doesn't help much, probably we can use several equations (one which binds P(AG), P(GG), P(A) wit D, and other that say that some frequencies sum up to 1).
 
 
 ```
@@ -161,7 +163,7 @@ DnCalc = Dcalc/Dmax
 ```{r echo=FALSE}
 p<-NULL
 l <- ncol(Zt)-1
-c = 1
+c = matrix(data = 0, nrow=nrow)
 for(i in 1:l) {
   for(j in i:ncol(Zt)) {
     SNP1gTmp <- genotype(Zt[,i],sep="")
@@ -182,12 +184,51 @@ pairs(p)
 There is linear relationship between X^2 and R^2 (line in form y=x).
 
 TODO why?
+
+## Task 8. (2p) Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs.
+# Make a plot of the R2 statistics against the distance between the markers. Comment on your results
+
 ```{r echo=FALSE}
+distance <- function(x,y) {
+  if (is.na(x) || is.na(y)) {
+    return (0)
+  }
+  ly <- nchar(y)
+  lx <- nchar(x)
+  min <- min(ly,lx)
+  delta = 0
+  for (i in 1:min) {
+    if (substr(x, i,i)!=substr(y, i, i)) {
+      delta = delta + 1
+    }
+  }
+  return(delta)
+}
 
+snpDistance <- function(snp1, snp2) {
+  d = 0
+  for (i in 1:length(snp1)) {
+    d = d + distance(snp1[i], snp2[i])
+  }
+  return (d)
+}
+distance_matrix <- matrix(data = NA, nrow = nrow(Zt), ncol= ncol(Zt))
+r2_matrix <- matrix(data = 0, nrow = nrow(Zt), ncol= ncol(Zt))
+for(i in 1:ncol(Zt)) {
+  for(j in 1:ncol(Zt)) {
+    distance_matrix[i,j] = snpDistance(Zt[,i], Zt[,j])
+    r2_matrix[i,j] <- LD(genotype(Zt[,i],sep=""),genotype(Zt[,j],sep=""))$`R^2`
+  }
+}
+r2 <- r2_matrix[upper.tri(r2_matrix)]
+dist <- distance_matrix[upper.tri(distance_matrix)]
 
-
+plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
 ```
+# Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen "skip NA approach"
 
+
+TODO R^2 and distance ....
 
 ```{r echo=FALSE}
 
