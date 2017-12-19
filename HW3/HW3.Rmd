@@ -172,7 +172,7 @@ Most common is GG gaplotype with probability of 0.7555556.
 
 
 ## Task 7 (2p)
-#### Compute 4 LD statistics for all the marker pairs in this data base (D, D', Ï2 and R2). Make a scatterplot matrix of these. Is there an exact linear relationship between Ï2 and R2 ? Why (not) so?
+#### Compute 4 LD statistics for all the marker pairs in this data base (D, D', ï¿½2 and R2). Make a scatterplot matrix of these. Is there an exact linear relationship between ï¿½2 and R2 ? Why (not) so?
 
 ```{r echo=FALSE}
 p<-NULL
@@ -196,8 +196,7 @@ pairs(p)
 
 There is linear relationship between X^2 and R^2 (line in form y = multiplier*x). By definition, X2 and R2 are tied by equation R2=X2/2n (number of chromosomes)
 
-
-## Task 8. (2p) 
+## Task 8. (2p)
 #### Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs. Make a plot of the R2 statistics against the distance between the markers. Comment on your results
 
 ```{r echo=FALSE}
@@ -237,14 +236,9 @@ dist <- distance_matrix[upper.tri(distance_matrix)]
 
 plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
 
-#### Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen #"skip NA approach"
-#TODO R^2 and distance .... ??
 ```
 
 There is no clear trend (correlation) between distance between SNPs char-wise and R^2. Which means that having very similar SNPs doesn't affect LD between them.
-
-
-
 
 
 ## Task 9. (2p) 
@@ -287,7 +281,7 @@ LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, titl
 ```{r echo=FALSE}
 LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
 ```
-  
+
 Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
 
 
