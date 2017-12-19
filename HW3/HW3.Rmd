@@ -101,8 +101,8 @@ SNP2g <- genotype(Zt[,2],sep="")
 
 res <- LD(SNP1g,SNP2g)
 res
-print("P-value:")
-res$`P-value`
+print("D statistics:")
+res$D
 
 ```
 D' is close to 1, so first assumption is that we might have high LD.
@@ -143,6 +143,11 @@ r2
 X2 <- r2 * 2*nrow(Zt)
 print("X**2: ")
 X2
+
+# r
+r <- sqrt(r2)
+print("r: ")
+r
 ```
 Differences for D occur because we used a small sample for our calculations (we read that with small sample size D' can be inflated).
 
@@ -163,6 +168,22 @@ P11 <- (157/180)**2 + D
 P22 <- (23/180)**2 + D
 P12 <- (157/180)*(23/180) - D
 P21 <-(157/180)*(23/180) - D
+
+# GG
+print("GG frequency: ")
+P11
+
+#AA
+print("AA frequency: ")
+P22
+
+#GA
+print("GA frequency: ")
+P12
+
+#AG 
+print("AG frequency: ")
+P21
 
 max(P11, P22, P12, P21)
 
@@ -228,18 +249,21 @@ distance_matrix <- matrix(data = NA, nrow = nrow(Zt), ncol= ncol(Zt))
 r2_matrix <- matrix(data = 0, nrow = nrow(Zt), ncol= ncol(Zt))
 for(i in 1:ncol(Zt)) {
   for(j in 1:ncol(Zt)) {
-    distance_matrix[i,j] = snpDistance(Zt[,i], Zt[,j])
+    distance_matrix[i,j] = pos[i]-pos[j]
     r2_matrix[i,j] <- LD(genotype(Zt[,i],sep=""),genotype(Zt[,j],sep=""))$`R^2`
   }
 }
 r2 <- r2_matrix[upper.tri(r2_matrix)]
 dist <- distance_matrix[upper.tri(distance_matrix)]
 
+r2[1:10]
+dist[1:10]
+
 plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
 
 ```
 
-There is no clear trend (correlation) between distance between SNPs char-wise and R^2. Which means that having very similar SNPs doesn't affect LD between them.
+There is correlations between distance and R^2 - the lower the distance, the higher defree of correlation between markers, which agrees with intuition and theory
 
 
 ## Task 9. (2p) 
@@ -283,7 +307,7 @@ LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, titl
 LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
 ```
 
-Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
+Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2. As D' is highly dependent on allele frequencies, R^2 shows regions of LD more clearly
 
 
 ## Task 10. (2p) 
@@ -342,6 +366,7 @@ LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, titl
 ```
 
 The first LD heatmap using measure of D' look similar to the AB0 region data. The differences step in on the second heatmap using R^2 data. The AB0 region SNPs seem to have clusters on the heatmap - regions that clearly influence each other. But generated data doesn't show any clear regions.
+So we don't see LD in generated data, as expected.
 
 ## Task 11 (1p) 
 ####Do you think there is strong or weak LD for the ABO region you just studied? Explain your opinion
