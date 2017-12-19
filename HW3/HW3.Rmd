@@ -37,6 +37,7 @@ nrow(Z)
 ```{r echo=FALSE}
 total <- ncol(Z)*nrow(Z)
 nas <- length(Z[is.na(Z)])
+print("Percentage of data missing:")
 nas/total*100
 ```
 
@@ -117,27 +118,30 @@ But we think there is no significant association between these two SNPs because 
 ```{r echo=FALSE}
 print(geno_loci[1:2,])
 
-table(SNP1g)
-table(SNP2g)
+#table(SNP1g)
+#table(SNP2g)
 
 #D = p(AB) - pA*pB -> A = G in 1st SNP, a = A in 1st SNP, B = G in 2nd SNP, b = A in 2nd SNP
 Dcalc = 68/90 - (157/180)*(157/180)# -> 68/90
-print("Calculated D:")
+print("D:")
 Dcalc
 
 pApB=(157/180)*(157/180)
 papb <- 23/180*23/180
 Dmax <- min(pApB, papb)
-Dmax
+
+print("D':")
 D_p <- Dcalc/Dmax
 D_p
 # -0.3194707, doesn't show high LD...
 
 r2 <- Dcalc^2 / (pApB*papb)
+print("r**2: ")
 r2
 
 # X^2
 X2 <- r2 * 2*nrow(Zt)
+print("X**2: ")
 X2
 ```
 Differences for D occur because we used a small sample for our calculations (we read that with small sample size D' can be inflated).
@@ -148,7 +152,6 @@ Differences for D occur because we used a small sample for our calculations (we 
 ####  Given your previous estimate of D, infer the haplotype frequencies. Which haplotype is the most common?
 
 ```{r echo=FALSE}
-#I haven't understood yet how it's done. INternet doesn't help much, probably we can use several equations (one which binds P(AG), P(GG), P(A) wit D, and other that say that some frequencies sum up to 1).
 #P11 = P(GG) = p(G)*p(G) + D
 #P22 = P(AA) = p(A)*p(A) + D
 #P12 = P(GA) = p(G)*p(A) - D
@@ -161,17 +164,16 @@ P22 <- (23/180)**2 + D
 P12 <- (157/180)*(23/180) - D
 P21 <-(157/180)*(23/180) - D
 
-
+max(P11, P22, P12, P21)
 
 ```
-Most common is GG gaplotype.
+Most common is GG gaplotype with probability of 0.7555556.
 
 
 
 
 ## Task 7 (2p)
-### Compute 4 LD statistics for all the marker pairs in this data base (D, D', Ï2 and R2). Make
-#a scatterplot matrix of these. Is there an exact linear relationship between Ï2 and R2 ? Why (not) so?
+#### Compute 4 LD statistics for all the marker pairs in this data base (D, D', Ï2 and R2). Make a scatterplot matrix of these. Is there an exact linear relationship between Ï2 and R2 ? Why (not) so?
 
 ```{r echo=FALSE}
 p<-NULL
@@ -193,11 +195,11 @@ for(i in 1:l) {
 pairs(p)
 ```
 
-
 There is linear relationship between X^2 and R^2 (line in form y=x). By definition, X2 and R2 are tied by equation R2=X2/2n (number of chromosomes)
 
 
-## Task 8. (2p) Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs. Make a plot of the R2 statistics against the distance between the markers. Comment on your results
+## Task 8. (2p) 
+#### Compute a distance matrix with the distance in base pairs between all possible pairs of SNPs. Make a plot of the R2 statistics against the distance between the markers. Comment on your results
 
 ```{r echo=FALSE}
 distance <- function(x,y) {
@@ -236,20 +238,21 @@ dist <- distance_matrix[upper.tri(distance_matrix)]
 
 plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
 
+#### Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen #"skip NA approach"
+
 ```
-#### Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen "skip NA approach"
-#### There is no clear trend (correlation) between distance between SNPs char-wise and R^2. Which means that having very similar SNPs doesn't affect LD between them.
+
+There is no clear trend (correlation) between distance between SNPs char-wise and R^2. Which means that having very similar SNPs doesn't affect LD between them.
 
 
-TODO R^2 and distance ....
+TODO R^2 and distance .... ??
 
 
 ## Task 9. (2p) 
 #### Make two LD heatmaps of the markers in this database, one using the R2 statistic and one using the D' statistic, and use the positional information on the markers. Are the results consistent? 
 
-#### ... we don't have SNPs labels here as it was in lecture.
-
 ```{r echo=FALSE}
+#### ... we don't have SNPs labels here as it was in lecture.
 RES <- data.frame(genotype(Zt[,1],sep=""))
 
 for(i in 2:ncol(Zt)) {
@@ -273,14 +276,10 @@ Dp <- Dm[upper.tri(Dp)]
 R2 <- Dm[upper.tri(R2)]
 X2 <- Dm[upper.tri(X2)]
 
-Dm
-pairs(cbind(Dm,Dp,R2,X2))
-
-
-#LDheatmap(RES, LDmeasure = "D'",color=rgb.palette(18))
-
-#dim(RES)
-dim(output)
+#Dm
+#pairs(cbind(Dm,Dp,R2,X2))
+#
+#dim(output)
 rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
 LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
 
@@ -288,8 +287,10 @@ LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, titl
 
 ```{r echo=FALSE}
 LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
-  ```
-### Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
+```
+  
+Results are incosistent - with D' LDHeatMap we can see that D's are uniformly distributed and are close to 1 for most of SNP pairs, while with R^2 we see several clusters of closely positioned SNPS to have high R^2
+
 
 ## Task 10. (2p) 
 
@@ -313,13 +314,14 @@ simulated <- HWData(nm = 45, n = 45, p=allelef)
 
 sim_df <- data.frame(row.names = 1:45)
 for(i in 1:nrow(simulated)){
-  generated_row
+    generated_row = c()
   row <- simulated[i,]
   for(j in 1:length(row)){
     
     snp <- colnames(simulated)[j]
     reps <- rep(snp, row[j])
-    append(generated_row, reps)
+    generated_row <- c(generated_row, reps)
+    #append(generated_row, reps)
     #append(x,reps)
     #print(generated_row)
     
@@ -341,10 +343,11 @@ output <- LD(RES3)
 rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
 LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
 LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
-
-as.genotype(simulated[1,])
-
 ```
+The first LD heatmap using measure of D' look similar to the AB0 region data. The differences step in on the second heatmap using R^2 data. The AB0 region SNPs seem to have clusters on the heatmap - regions that clearly influence each other. But generated data doesn't show any clear regions.
 
 ## Task 11 (1p) 
 ####Do you think there is strong or weak LD for the ABO region you just studied? Explain your opinion
+
+There is a strong LD for the AB0 region. We see high D' values which means that (almost) all SNPs of this region are strongly associated. Also, we see some low R^2 values which doesn't directly mean that there is weak LD but might also mean that in some loci - although having strong association - are represented with low quantities. But we can see regions even in R^2 LD heatmap that have high values and thus showing high LD (same region on D' heatmap is high-valued as well).
+
