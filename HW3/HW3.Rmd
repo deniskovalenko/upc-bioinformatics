@@ -1,7 +1,7 @@
 ---
-title: "BSG HW3"
+title: "Bioinformatics and Statistical Genetics (thaught by Jan Graffelman), HW3, Linkage Disequilibrium"
 author: "Sten-Oliver Salumaa, Denys Kovalenko"
-date: "13 December 2017"
+date: "8 December 2017"
 output: html_document
 ---
 
@@ -22,6 +22,7 @@ filename = "ABO-CHB.rda"
 load(filename)
 ```
 
+Data loaded.
 
 ## Task2 (1p)
 #### How many individuals and how many SNPs are there in the database?
@@ -109,15 +110,13 @@ But we think there is no significant association between these two SNPs because 
 
 
 
-
-
 ## Task5 (2p)
 #### Given your previous estimate of D, and using the formulae from the lecture slides, compute the statistics D', Chi2, R2 and r by hand for the first pair of SNPs. Do your results coincide with those obtained by the LD function? Can you explain possible differences?
 
-#nice example http://pbgworks.org/sites/pbgworks.org/files/measuresoflinkagedisequilibrium-111119214123-phpapp01_0.pdf
 ```{r echo=FALSE}
-print(geno_loci[1:2,])
+#print(geno_loci[1:2,])
 
+#nice example http://pbgworks.org/sites/pbgworks.org/files/measuresoflinkagedisequilibrium-111119214123-phpapp01_0.pdf
 #table(SNP1g)
 #table(SNP2g)
 
@@ -195,7 +194,7 @@ for(i in 1:l) {
 pairs(p)
 ```
 
-There is linear relationship between X^2 and R^2 (line in form y=x). By definition, X2 and R2 are tied by equation R2=X2/2n (number of chromosomes)
+There is linear relationship between X^2 and R^2 (line in form y = multiplier*x). By definition, X2 and R2 are tied by equation R2=X2/2n (number of chromosomes)
 
 
 ## Task 8. (2p) 
@@ -239,13 +238,13 @@ dist <- distance_matrix[upper.tri(distance_matrix)]
 plot(dist, r2, ylab="R^2 statistic", xlab = "distance between SNPs")
 
 #### Comment is required on results - when comparing two strings and 1 is NA - should we increase distance or skip? I've chosen #"skip NA approach"
-
+#TODO R^2 and distance .... ??
 ```
 
 There is no clear trend (correlation) between distance between SNPs char-wise and R^2. Which means that having very similar SNPs doesn't affect LD between them.
 
 
-TODO R^2 and distance .... ??
+
 
 
 ## Task 9. (2p) 
@@ -269,7 +268,7 @@ Dp <- output$"D'"
 R2 <- output$"R^2"
 X2 <- output$"X^2"
 
-Dm[1:10,1:10]
+#Dm[1:10,1:10]
 
 Dm <- Dm[upper.tri(Dm)]
 Dp <- Dm[upper.tri(Dp)]
@@ -297,7 +296,7 @@ Results are incosistent - with D' LDHeatMap we can see that D's are uniformly di
 #### Simulate 45 independent SNPs under the assumption of Hardy-Weinberg equilibrium. Simulate as many SNPs as you have in your database, and take care to match each SNP in your database with a simulated SNP that has the same sample size and allele frequency. Make two LD heatmaps of the simulated SNPs, one using R^2 and one using D'. Compare these to the LD heatmap of the ABO region. What do you observe? State your conclusions
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 
 HWsimulated <- HWData(45,45)
 
@@ -344,6 +343,7 @@ rgb.palette <- colorRampPalette(rev(c("blue", "orange", "red")), space = "rgb")
 LDheatmap(output$`R^2`,LDmeasure="r", genetic.distances=pos, add.map=TRUE, title="R^2 LDheatmap",color=rgb.palette(18))
 LDheatmap(output$`D'`, genetic.distances=pos, LDmeasure="D'", add.map=TRUE, title="D' LD heatmap",color=rgb.palette(18))
 ```
+
 The first LD heatmap using measure of D' look similar to the AB0 region data. The differences step in on the second heatmap using R^2 data. The AB0 region SNPs seem to have clusters on the heatmap - regions that clearly influence each other. But generated data doesn't show any clear regions.
 
 ## Task 11 (1p) 
