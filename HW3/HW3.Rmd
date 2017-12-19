@@ -121,7 +121,8 @@ But we think there is no significant association between these two SNPs because 
 #table(SNP2g)
 
 #D = p(AB) - pA*pB -> A = G in 1st SNP, a = A in 1st SNP, B = G in 2nd SNP, b = A in 2nd SNP
-Dcalc = 68/90 - (157/180)*(157/180)# -> 68/90
+#Dcalc = 68/90 - (157/180)*(157/180)# -> 68/90
+Dcalc = res$D
 print("D:")
 Dcalc
 
@@ -166,7 +167,7 @@ P21 <-(157/180)*(23/180) - D
 max(P11, P22, P12, P21)
 
 ```
-Most common is GG gaplotype with probability of 0.7555556.
+Most common is GG haplotype with probability of 0.744763.
 
 
 
@@ -330,6 +331,8 @@ for(i in 2:ncol(sim_df)) {
    RES3 <- cbind(RES3,snp)
 }
 colnames(RES3) <- 1:45
+RES3 <- RES3[sample(nrow(RES3)),]
+rownames(RES3) <- 1:45
 output <- LD(RES3)
 
 
