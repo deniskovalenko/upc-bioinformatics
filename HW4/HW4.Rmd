@@ -10,8 +10,112 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Task1
-####  (1p) How many individuals and how many SNPs are there in the database? What percentage of the data is missing? 
-```{r echo=FALSE}
+#### Myoglobin is an oxygen-binding protein found in muscle tissue. The protein is encoded by the MB gene, which resides on the long arm of chromosome 22. The file MB.rda contains genotype information of unrelated individuals for a set of SNPs in the MB gene. The file contains genotype information in object Y. Load this data into the R environment.
+
+```{r echo=FALSE, warning=FALSE}
 load("MB.rda")
+```
+
+
+## Task2
+####  (1p) How many individuals and how many SNPs are there in the database? What percentage of the data is missing? 
+
+```{r echo=FALSE, warning=FALSE}
+print("Individual count:")
+nrow(Y)
+print("SNP count:")
+ncol(Y)
+
+total <- ncol(Y)*nrow(Y)
+nas <- length(Y[is.na(Y)])
+print("Percentage of data missing:")
+nas/total*100
+```
+
+
+## Task3
+#### Assuming all SNPs are bi-allelic, how many haplotypes can theoretically be found for this data set?
+
+```{r echo=FALSE, warning=FALSE}
+# not sure but looks like 2**(num of SNPs)
+print("Theoretical number of haplotypes:")
+2**ncol(Y)
+```
+
+## Task4
+#### Estimate haplotype frequencies using the haplo.stats package (set the minimum posterior probability to 0.001). How many haplotypes do you find? List the haplotypes and their estimated probabilities. Which haplotype is the most common?
+
+```{r echo=FALSE, warning=FALSE}
+library(haplo.stats)
+
+# Remove all SNPs with one or more missing observations.
+nmis <- function(x) {
+  y <- sum(is.na(x))
+}
+
+# get the nmis of SNPs
+mispersnp <- apply(Y,1,nmis)
+mispersnp
+
+dim(Y)
+Y2 <- Y[mispersnp==0,]
+dim(Y2)
+
+
+s <- Y2[1,1:5]
+s <- t(data.frame(s))
+apply(format(s), 1, paste, collapse="")
+paste(s[1,], collapse = "")
+
+# no se, we have to produce columns like "A G D C A D S D A A" or whatever and thed we can use the 
+# other function
+Geno2 <- matrix(nrow = length(Y2[1,]))
+for(i in 1:length(Y2[1,])){
+  print(i)
+  rbind(Geno2, cbind(substr(Y2[,i],1,1), substr(Y2[,i],2,2)))
+}
+
+Geno <- cbind(substr(Y[,1],1,1),substr(Y[,1],2,2),
+              substr(Y[,2],1,1),substr(Y[,2],2,2),
+              substr(Y[,3],1,1),substr(Y[,3],2,2),
+              substr(Y[,4],1,1),substr(Y[,4],2,2),
+              substr(Y[,5],1,1),substr(Y[,5],2,2))
+Geno
+
+
+snpnames <- paste("snp", 1:5,sep="")
+snpnames
+
+out <-  haplo.em(Geno,
+                 locus.label=snpnames,
+                 control=haplo.em.control(min.posterior=1e-4))
+
+
+
+
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+
+```
+
+```{r echo=FALSE, warning=FALSE}
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
 
 ```
