@@ -55,47 +55,56 @@ nmis <- function(x) {
 
 # get the nmis of SNPs
 mispersnp <- apply(Y,1,nmis)
-mispersnp
+#mispersnp
 
-dim(Y)
+#dim(Y)
 Y2 <- Y[mispersnp==0,]
-dim(Y2)
-
-
-s <- Y2[1,1:5]
-s <- t(data.frame(s))
-apply(format(s), 1, paste, collapse="")
-paste(s[1,], collapse = "")
-
-# no se, we have to produce columns like "A G D C A D S D A A" or whatever and thed we can use the 
-# other function
-Geno2 <- matrix(nrow = length(Y2[1,]))
-for(i in 1:length(Y2[1,])){
-  print(i)
-  rbind(Geno2, cbind(substr(Y2[,i],1,1), substr(Y2[,i],2,2)))
-}
-
+#dim(Y2)
+# no se, we have to produce columns like "A G D C A D S D A A" or whatever and thed we can use the other function
+# world-class coding right here:
 Geno <- cbind(substr(Y[,1],1,1),substr(Y[,1],2,2),
               substr(Y[,2],1,1),substr(Y[,2],2,2),
               substr(Y[,3],1,1),substr(Y[,3],2,2),
               substr(Y[,4],1,1),substr(Y[,4],2,2),
-              substr(Y[,5],1,1),substr(Y[,5],2,2))
-Geno
+              substr(Y[,5],1,1),substr(Y[,5],2,2),
+              substr(Y[,6],1,1),substr(Y[,6],2,2),
+              substr(Y[,7],1,1),substr(Y[,7],2,2),
+              substr(Y[,8],1,1),substr(Y[,8],2,2),
+              substr(Y[,9],1,1),substr(Y[,9],2,2),
+              substr(Y[,10],1,1),substr(Y[,10],2,2),
+              substr(Y[,11],1,1),substr(Y[,11],2,2),
+              substr(Y[,12],1,1),substr(Y[,12],2,2),
+              substr(Y[,13],1,1),substr(Y[,13],2,2),
+              substr(Y[,14],1,1),substr(Y[,14],2,2),
+              substr(Y[,15],1,1),substr(Y[,15],2,2),
+              substr(Y[,16],1,1),substr(Y[,16],2,2),
+              substr(Y[,17],1,1),substr(Y[,17],2,2),
+              substr(Y[,18],1,1),substr(Y[,18],2,2),
+              substr(Y[,19],1,1),substr(Y[,19],2,2),
+              substr(Y[,20],1,1),substr(Y[,20],2,2),
+              substr(Y[,21],1,1),substr(Y[,21],2,2),
+              substr(Y[,22],1,1),substr(Y[,22],2,2),
+              substr(Y[,23],1,1),substr(Y[,23],2,2),
+              substr(Y[,24],1,1),substr(Y[,24],2,2),
+              substr(Y[,25],1,1),substr(Y[,25],2,2),
+              substr(Y[,26],1,1),substr(Y[,26],2,2),
+              substr(Y[,27],1,1),substr(Y[,27],2,2),
+              substr(Y[,28],1,1),substr(Y[,28],2,2))
 
 
-snpnames <- paste("snp", 1:5,sep="")
-snpnames
+
+snpnames <- paste("snp", 1:28,sep="")
 
 out <-  haplo.em(Geno,
                  locus.label=snpnames,
                  control=haplo.em.control(min.posterior=1e-4))
 
-
-
-
-
-
+out
 ```
+
+In total there are 11 haplotypes with "TCACCACTAATGCCAACACGGCCCCACT" being the most popular haplotype with probability of 72.662 %
+
+
 
 
 ```{r echo=FALSE, warning=FALSE}
