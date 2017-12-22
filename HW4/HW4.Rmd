@@ -62,7 +62,7 @@ Y2 <- Y[mispersnp==0,]
 #dim(Y2)
 # no se, we have to produce columns like "A G D C A D S D A A" or whatever and thed we can use the other function
 # world-class coding right here:
-Geno <- cbind(substr(Y2[,1],1,1),substr(Y2[,1],2,2),
+Geno2 <- cbind(substr(Y2[,1],1,1),substr(Y2[,1],2,2),
               substr(Y2[,2],1,1),substr(Y2[,2],2,2),
               substr(Y2[,3],1,1),substr(Y2[,3],2,2),
               substr(Y2[,4],1,1),substr(Y2[,4],2,2),
@@ -95,14 +95,18 @@ Geno <- cbind(substr(Y2[,1],1,1),substr(Y2[,1],2,2),
 
 snpnames <- paste("snp", 1:28,sep="")
 
-out <-  haplo.em(Geno,
+out <-  haplo.em(Geno2,
                  locus.label=snpnames,
                  control=haplo.em.control(min.posterior=1e-4))
 
-out
-```
 
-In total there are 11 haplotypes with "TCACCACTAATGCCAACACGGCCCCACT" being the most popular haplotype with probability of 72.662 %
+
+print("In total there are 11 haplotypes with")
+paste(tail(out$haplotype,1))
+print("being the most popular haplotype with probability of")
+tail(out$hap.prob,1)
+
+```
 
 
 ## Task5
@@ -111,6 +115,7 @@ In total there are 11 haplotypes with "TCACCACTAATGCCAACACGGCCCCACT" being the m
 I have no idea
 
 ```{r echo=FALSE, warning=FALSE}
+
 
 
 ```
