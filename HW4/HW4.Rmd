@@ -49,16 +49,16 @@ print("Theoretical number of haplotypes:")
 library(haplo.stats)
 
 # Remove all SNPs with one or more missing observations.
-nmis <- function(x) {
-  y <- sum(is.na(x))
-}
+#nmis <- function(x) {
+#  y <- sum(is.na(x))
+#}
 
 # get the nmis of SNPs
-mispersnp <- apply(Y,1,nmis)
+#mispersnp <- apply(Y,1,nmis)
 #mispersnp
 
 #dim(Y)
-Y2 <- Y[mispersnp==0,]
+#Y2 <- Y[mispersnp==0,]
 #dim(Y2)
 
 Geno2 <- cbind(substr(Y[,1],1,1),substr(Y[,1],2,2))
@@ -102,12 +102,33 @@ tail(out$hap.prob,1)
 ## Task 6. (1p)
 #### Suppose we would delete SNP rs5999890 from the database prior to haplotype estimation. Would this affect the results obtained? Justify your answer. Delete this SNP from the database and estimate again the haplotype frequencies. List the haplotypes and their estimated frequencies.
 
-It shouldn't affect results, cause SNP rs5999890 has only CC values, so it doesn't change possible haplotypes.
+##It shouldn't affect results, cause SNP rs5999890 has only CC values, so it doesn't change possible haplotypes.
 ```{r echo=FALSE, warning=FALSE}
- Y_cut <- Y[,-5]
+Y_cut <- Y[,-5]
+
+Geno2_cut <- cbind(substr(Y_cut[,1],1,1),substr(Y_cut[,1],2,2))
+for(i in 2:ncol(Y_cut)) {
+  Geno2_cut <- cbind(Geno2_cut,substr(Y_cut[,i],1,1),substr(Y_cut[,i],2,2))
+}
+
+
+snpnames <- paste("snp", 1:27,sep="")
+
+out_cut <-  haplo.em(Geno2_cut,
+                 locus.label=snpnames,
+                 control=haplo.em.control(min.posterior=1e-3))
+
+
+
+print("In total there are ")
+nrow(out_cut$haplotype)
+print("haplotypes with")
+paste(tail(out_cut$haplotype,1))
+print("being the most popular haplotype with probability of")
+tail(out_cut$hap.prob,1)
 
 ```
-
+## and actually we got same results
 
 ```{r echo=FALSE, warning=FALSE}
 
