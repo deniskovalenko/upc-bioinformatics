@@ -49,23 +49,22 @@ print("Theoretical number of haplotypes:")
 library(haplo.stats)
 
 # Remove all SNPs with one or more missing observations.
-nmis <- function(x) {
-  y <- sum(is.na(x))
-}
+#nmis <- function(x) {
+#  y <- sum(is.na(x))
+#}
 
 # get the nmis of SNPs
-mispersnp <- apply(Y,1,nmis)
+#mispersnp <- apply(Y,1,nmis)
 #mispersnp
 
 #dim(Y)
-Y2 <- Y[mispersnp==0,]
+#Y2 <- Y[mispersnp==0,]
 #dim(Y2)
 
 Geno2 <- cbind(substr(Y[,1],1,1),substr(Y[,1],2,2))
 for(i in 2:ncol(Y)) {
   Geno2 <- cbind(Geno2,substr(Y[,i],1,1),substr(Y[,i],2,2))
 }
-
 
 snpnames <- paste("snp", 1:28,sep="")
 
@@ -90,7 +89,35 @@ tail(out$hap.prob,1)
 
 ```{r echo=FALSE, warning=FALSE}
 
+is.hetero <- function(x) {
+  return(substr(x, 1, 1) != substr(x, 2, 2))
+}
 
+num.hetero <- function(x) {
+  return(sum(is.hetero(x[!is.na(x)])))
+}
+
+
+hetero_count <- function(row){
+  row <- row[!is.na(row)]
+  res <- substr(row, 1, 1) != substr(row, 2, 2)
+  for(i in 2:length(row)){
+    append(res, substr(row[i], 1, 1) != substr(row[i], 2, 2))
+  }
+  return(sum(res))
+}
+
+
+counts <- apply(Y, 1, hetero_count)
+ambiguous <- counts[counts > 1]
+print("Individuals with ambiguous haplotypes:")
+ambiguous
+
+
+AmbiGeno <- cbind(substr(Y[,1],1,1),substr(Y[,1],2,2))
+for(i in 2:ncol(Y)) {
+  AmbiGeno <- cbind(AmbiGeno,substr(Y[,i],1,1),substr(Y[,i],2,2))
+}
 
 ```
 
