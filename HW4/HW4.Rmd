@@ -1,5 +1,5 @@
 ---
-title: "BSG HW3"
+title: "BSG HW4"
 author: "Sten-Oliver Salumaa, Denys Kovalenko"
 date: "13 December 2017"
 output: html_document
@@ -60,48 +60,24 @@ mispersnp <- apply(Y,1,nmis)
 #dim(Y)
 Y2 <- Y[mispersnp==0,]
 #dim(Y2)
-# no se, we have to produce columns like "A G D C A D S D A A" or whatever and thed we can use the other function
-# world-class coding right here:
-Geno2 <- cbind(substr(Y2[,1],1,1),substr(Y2[,1],2,2),
-              substr(Y2[,2],1,1),substr(Y2[,2],2,2),
-              substr(Y2[,3],1,1),substr(Y2[,3],2,2),
-              substr(Y2[,4],1,1),substr(Y2[,4],2,2),
-              substr(Y2[,5],1,1),substr(Y2[,5],2,2),
-              substr(Y2[,6],1,1),substr(Y2[,6],2,2),
-              substr(Y2[,7],1,1),substr(Y2[,7],2,2),
-              substr(Y2[,8],1,1),substr(Y2[,8],2,2),
-              substr(Y2[,9],1,1),substr(Y2[,9],2,2),
-              substr(Y2[,10],1,1),substr(Y2[,10],2,2),
-              substr(Y2[,11],1,1),substr(Y2[,11],2,2),
-              substr(Y2[,12],1,1),substr(Y2[,12],2,2),
-              substr(Y2[,13],1,1),substr(Y2[,13],2,2),
-              substr(Y2[,14],1,1),substr(Y2[,14],2,2),
-              substr(Y2[,15],1,1),substr(Y2[,15],2,2),
-              substr(Y2[,16],1,1),substr(Y2[,16],2,2),
-              substr(Y2[,17],1,1),substr(Y2[,17],2,2),
-              substr(Y2[,18],1,1),substr(Y2[,18],2,2),
-              substr(Y2[,19],1,1),substr(Y2[,19],2,2),
-              substr(Y2[,20],1,1),substr(Y2[,20],2,2),
-              substr(Y2[,21],1,1),substr(Y2[,21],2,2),
-              substr(Y2[,22],1,1),substr(Y2[,22],2,2),
-              substr(Y2[,23],1,1),substr(Y2[,23],2,2),
-              substr(Y2[,24],1,1),substr(Y2[,24],2,2),
-              substr(Y2[,25],1,1),substr(Y2[,25],2,2),
-              substr(Y2[,26],1,1),substr(Y2[,26],2,2),
-              substr(Y2[,27],1,1),substr(Y2[,27],2,2),
-              substr(Y2[,28],1,1),substr(Y2[,28],2,2))
 
+Geno2 <- cbind(substr(Y[,1],1,1),substr(Y[,1],2,2))
+for(i in 2:ncol(Y)) {
+  Geno2 <- cbind(Geno2,substr(Y[,i],1,1),substr(Y[,i],2,2))
+}
 
 
 snpnames <- paste("snp", 1:28,sep="")
 
 out <-  haplo.em(Geno2,
                  locus.label=snpnames,
-                 control=haplo.em.control(min.posterior=1e-4))
+                 control=haplo.em.control(min.posterior=1e-3))
 
 
 
-print("In total there are 11 haplotypes with")
+print("In total there are ")
+nrow(out$haplotype)
+print("haplotypes with")
 paste(tail(out$haplotype,1))
 print("being the most popular haplotype with probability of")
 tail(out$hap.prob,1)
@@ -110,9 +86,7 @@ tail(out$hap.prob,1)
 
 
 ## Task5
-####  Is the haplotypic constitution of any of the individuals in the database ambiguous or uncertain? If so, for which individuals? What is, in case, the most likely haplotypic constitution of any possibly uncertain individuals?
-
-I have no idea
+####  Is the haplotypic constitution of any of the individuals in the database ambiguous or uncertain? If so, for which individuals? What is, in this case, the most likely haplotypic constitution of any possibly uncertain individuals?
 
 ```{r echo=FALSE, warning=FALSE}
 
