@@ -113,11 +113,27 @@ ambiguous <- counts[counts > 1]
 print("Individuals with ambiguous haplotypes:")
 ambiguous
 
-
-AmbiGeno <- cbind(substr(Y[,1],1,1),substr(Y[,1],2,2))
-for(i in 2:ncol(Y)) {
-  AmbiGeno <- cbind(AmbiGeno,substr(Y[,i],1,1),substr(Y[,i],2,2))
+ambi_haplo <- Y[counts > 1, ]
+ambi_geno <- cbind(substr(ambi_haplo[,1],1,1),substr(ambi_haplo[,1],2,2))
+for(i in 2:ncol(ambi_haplo)) {
+  ambi_geno <- cbind(ambi_geno,substr(ambi_haplo[,i],1,1),substr(ambi_haplo[,i],2,2))
 }
+
+
+
+
+snpnames2 <- paste("snp", 1:ncol(Y),sep="")
+ambi_out <-
+  haplo.em(ambi_geno,
+  locus.label = snpnames2,
+  control = haplo.em.control(min.posterior = 1e-3))
+
+#as.character(haplo$haplotype[which.max(haplo$hap.prob), ])
+
+print("The most likely haplotypic constitution:")
+paste(tail(out$haplotype,1))
+print("And its probability:")
+tail(ambi_out$hap.prob,1)
 
 ```
 
