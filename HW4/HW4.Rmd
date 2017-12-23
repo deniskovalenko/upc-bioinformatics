@@ -125,9 +125,12 @@ I have no idea
 
 ```
 
+## Task 6. (1p)
+#### Suppose we would delete SNP rs5999890 from the database prior to haplotype estimation. Would this affect the results obtained? Justify your answer. Delete this SNP from the database and estimate again the haplotype frequencies. List the haplotypes and their estimated frequencies.
 
+It shouldn't affect results, cause SNP rs5999890 has only CC values, so it doesn't change possible haplotypes.
 ```{r echo=FALSE, warning=FALSE}
-
+ Y_cut <- Y[,-5]
 
 ```
 
