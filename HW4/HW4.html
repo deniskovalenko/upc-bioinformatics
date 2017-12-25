@@ -124,16 +124,16 @@ $(document).ready(function () {
 </div>
 
 
-<div id="task1" class="section level2">
-<h2>Task1</h2>
+<div id="task1-1p" class="section level2">
+<h2>Task1 (1p)</h2>
 <div id="myoglobin-is-an-oxygen-binding-protein-found-in-muscle-tissue.-the-protein-is-encoded-by-the-mb-gene-which-resides-on-the-long-arm-of-chromosome-22.-the-file-mb.rda-contains-genotype-information-of-unrelated-individuals-for-a-set-of-snps-in-the-mb-gene.-the-file-contains-genotype-information-in-object-y.-load-this-data-into-the-r-environment." class="section level4">
 <h4>Myoglobin is an oxygen-binding protein found in muscle tissue. The protein is encoded by the MB gene, which resides on the long arm of chromosome 22. The file MB.rda contains genotype information of unrelated individuals for a set of SNPs in the MB gene. The file contains genotype information in object Y. Load this data into the R environment.</h4>
 </div>
 </div>
-<div id="task2" class="section level2">
-<h2>Task2</h2>
-<div id="p-how-many-individuals-and-how-many-snps-are-there-in-the-database-what-percentage-of-the-data-is-missing" class="section level4">
-<h4>(1p) How many individuals and how many SNPs are there in the database? What percentage of the data is missing?</h4>
+<div id="task2-1p" class="section level2">
+<h2>Task2 (1p)</h2>
+<div id="how-many-individuals-and-how-many-snps-are-there-in-the-database-what-percentage-of-the-data-is-missing" class="section level4">
+<h4>How many individuals and how many SNPs are there in the database? What percentage of the data is missing?</h4>
 <pre><code>## [1] &quot;Individual count:&quot;</code></pre>
 <pre><code>## [1] 139</code></pre>
 <pre><code>## [1] &quot;SNP count:&quot;</code></pre>
@@ -142,18 +142,23 @@ $(document).ready(function () {
 <pre><code>## [1] 39.54265</code></pre>
 </div>
 </div>
-<div id="task3" class="section level2">
-<h2>Task3</h2>
+<div id="task3-1p" class="section level2">
+<h2>Task3 (1p)</h2>
 <div id="assuming-all-snps-are-bi-allelic-how-many-haplotypes-can-theoretically-be-found-for-this-data-set" class="section level4">
 <h4>Assuming all SNPs are bi-allelic, how many haplotypes can theoretically be found for this data set?</h4>
 <pre><code>## [1] &quot;Theoretical number of haplotypes:&quot;</code></pre>
 <pre><code>## [1] 268435456</code></pre>
 </div>
 </div>
-<div id="task4" class="section level2">
-<h2>Task4</h2>
+<div id="task4-2p" class="section level2">
+<h2>Task4 (2p)</h2>
 <div id="estimate-haplotype-frequencies-using-the-haplo.stats-package-set-the-minimum-posterior-probability-to-0.001.-how-many-haplotypes-do-you-find-list-the-haplotypes-and-their-estimated-probabilities.-which-haplotype-is-the-most-common" class="section level4">
 <h4>Estimate haplotype frequencies using the haplo.stats package (set the minimum posterior probability to 0.001). How many haplotypes do you find? List the haplotypes and their estimated probabilities. Which haplotype is the most common?</h4>
+<pre><code>## 
+## Attaching package: 'haplo.stats'</code></pre>
+<pre><code>## The following object is masked from 'package:genetics':
+## 
+##     locus</code></pre>
 <pre><code>## [1] &quot;Total haplotypes:&quot;</code></pre>
 <pre><code>## [1] 6</code></pre>
 <pre><code>## [1] &quot;Most popular haplotype:&quot;</code></pre>
@@ -163,25 +168,20 @@ $(document).ready(function () {
 <pre><code>## [1] 0.7266187</code></pre>
 </div>
 </div>
-<div id="task5" class="section level2">
-<h2>Task5</h2>
+<div id="task5-2p" class="section level2">
+<h2>Task5 (2p)</h2>
 <div id="is-the-haplotypic-constitution-of-any-of-the-individuals-in-the-database-ambiguous-or-uncertain-if-so-for-which-individuals-what-is-in-this-case-the-most-likely-haplotypic-constitution-of-any-possibly-uncertain-individuals" class="section level4">
 <h4>Is the haplotypic constitution of any of the individuals in the database ambiguous or uncertain? If so, for which individuals? What is, in this case, the most likely haplotypic constitution of any possibly uncertain individuals?</h4>
 <pre><code>## [1] &quot;Individuals with ambiguous haplotypes:&quot;</code></pre>
-<pre><code>## NA18524 NA18525 NA18527 NA18528 NA18532 NA18534 NA18536 NA18537 NA18538 
-##       8       4       4       4      18       4       4       8       7 
-## NA18540 NA18541 NA18545 NA18547 NA18548 NA18564 NA18567 NA18570 NA18572 
-##       4       4       7       9       4       8       4       7      17 
-## NA18573 NA18576 NA18579 NA18583 NA18591 NA18592 NA18593 NA18594 NA18595 
-##       8      18       8       4       4      15      18       8       4 
-## NA18597 NA18599 NA18608 NA18611 NA18621 NA18622 NA18623 NA18629 NA18631 
-##       9       7       8       8       7      11       8       4       7 
-## NA18632 NA18633 NA18636 NA18637 NA18640 NA18641 NA18645 NA18649 NA18739 
-##       8       7      18       8       4       4       4       4       4 
-## NA18740 NA18742 NA18751 NA18757 NA18758 NA18761 NA18762 NA18765 NA18774 
-##       4       9       4       4       7       3       5       7       4 
-## NA18777 NA18779 NA18780 NA18783 NA18785 NA18787 NA18790 NA18794 
-##       4       4       9       9       4       4       4       4</code></pre>
+<pre><code>##  [1] &quot;NA18524&quot; &quot;NA18525&quot; &quot;NA18527&quot; &quot;NA18528&quot; &quot;NA18532&quot; &quot;NA18534&quot; &quot;NA18536&quot;
+##  [8] &quot;NA18537&quot; &quot;NA18538&quot; &quot;NA18540&quot; &quot;NA18541&quot; &quot;NA18545&quot; &quot;NA18547&quot; &quot;NA18548&quot;
+## [15] &quot;NA18564&quot; &quot;NA18567&quot; &quot;NA18570&quot; &quot;NA18572&quot; &quot;NA18573&quot; &quot;NA18576&quot; &quot;NA18579&quot;
+## [22] &quot;NA18583&quot; &quot;NA18591&quot; &quot;NA18592&quot; &quot;NA18593&quot; &quot;NA18594&quot; &quot;NA18595&quot; &quot;NA18597&quot;
+## [29] &quot;NA18599&quot; &quot;NA18608&quot; &quot;NA18611&quot; &quot;NA18621&quot; &quot;NA18622&quot; &quot;NA18623&quot; &quot;NA18629&quot;
+## [36] &quot;NA18631&quot; &quot;NA18632&quot; &quot;NA18633&quot; &quot;NA18636&quot; &quot;NA18637&quot; &quot;NA18640&quot; &quot;NA18641&quot;
+## [43] &quot;NA18645&quot; &quot;NA18649&quot; &quot;NA18739&quot; &quot;NA18740&quot; &quot;NA18742&quot; &quot;NA18751&quot; &quot;NA18757&quot;
+## [50] &quot;NA18758&quot; &quot;NA18761&quot; &quot;NA18762&quot; &quot;NA18765&quot; &quot;NA18774&quot; &quot;NA18777&quot; &quot;NA18779&quot;
+## [57] &quot;NA18780&quot; &quot;NA18783&quot; &quot;NA18785&quot; &quot;NA18787&quot; &quot;NA18790&quot; &quot;NA18794&quot;</code></pre>
 <pre><code>## [1] &quot;The most likely haplotypic constitution for these ambiguous haplotypes:&quot;</code></pre>
 <pre><code>##  [1] &quot;T&quot; &quot;C&quot; &quot;A&quot; &quot;C&quot; &quot;C&quot; &quot;A&quot; &quot;C&quot; &quot;T&quot; &quot;A&quot; &quot;A&quot; &quot;T&quot; &quot;G&quot; &quot;C&quot; &quot;C&quot; &quot;A&quot; &quot;A&quot; &quot;C&quot;
 ## [18] &quot;A&quot; &quot;C&quot; &quot;G&quot; &quot;G&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;A&quot; &quot;C&quot; &quot;T&quot;</code></pre>
@@ -189,8 +189,8 @@ $(document).ready(function () {
 <pre><code>## [1] 0.4516129</code></pre>
 </div>
 </div>
-<div id="task-6.-1p" class="section level2">
-<h2>Task 6. (1p)</h2>
+<div id="task6-1p" class="section level2">
+<h2>Task6 (1p)</h2>
 <div id="suppose-we-would-delete-snp-rs5999890-from-the-database-prior-to-haplotype-estimation.-would-this-affect-the-results-obtained-justify-your-answer.-delete-this-snp-from-the-database-and-estimate-again-the-haplotype-frequencies.-list-the-haplotypes-and-their-estimated-frequencies." class="section level4">
 <h4>Suppose we would delete SNP rs5999890 from the database prior to haplotype estimation. Would this affect the results obtained? Justify your answer. Delete this SNP from the database and estimate again the haplotype frequencies. List the haplotypes and their estimated frequencies.</h4>
 <p>It shouldn’t affect results, cause SNP rs5999890 has only CC values, so it doesn’t change possible haplotypes.</p>
@@ -203,6 +203,50 @@ $(document).ready(function () {
 <pre><code>## [1] &quot;Probability of the most popular haplotype:&quot;</code></pre>
 <pre><code>## [1] 0.7266187</code></pre>
 <p>The test proves that actually we got same results.</p>
+<pre><code>## [1] &quot;Listing haplotypes and their estimated frequencies:&quot;</code></pre>
+<pre><code>## =========================================================================== 
+##                                 Haplotypes                                  
+## =========================================================================== 
+##   snp1 snp2 snp3 snp4 snp5 snp6 snp7 snp8 snp9 snp10 snp11 snp12 snp13
+## 1    C    A    A    C    A    G    T    A    G     C     G     C     C
+## 2    T    A    A    C    A    G    C    G    G     C     A     A     T
+## 3    T    A    A    C    A    G    C    G    G     C     A     A     T
+## 4    T    A    A    C    A    G    T    A    G     C     A     A     T
+## 5    T    A    G    G    A    G    T    A    G     C     G     C     C
+## 6    T    C    A    C    A    C    T    A    A     T     G     C     C
+##   snp14 snp15 snp16 snp17 snp18 snp19 snp20 snp21 snp22 snp23 snp24 snp25
+## 1     A     A     C     C     C     C     G     C     C     C     C     A
+## 2     G     G     T     C     T     C     A     T     T     C     C     A
+## 3     G     G     T     C     T     C     G     C     T     C     C     A
+## 4     G     A     C     C     T     C     G     C     T     C     C     A
+## 5     A     A     C     C     C     C     G     C     C     C     C     A
+## 6     A     A     C     A     C     G     G     C     C     C     C     A
+##   snp26 snp27 hap.freq
+## 1     C     T  0.02158
+## 2     C     T  0.05665
+## 3     C     T  0.01511
+## 4     C     T  0.00378
+## 5     C     T  0.17626
+## 6     C     T  0.72662
+## =========================================================================== 
+##                                   Details                                   
+## =========================================================================== 
+## lnlike =  -197.5975 
+## lr stat for no LD =  1868.693 , df =  -16 , p-val =  NA</code></pre>
+</div>
+</div>
+<div id="task8-1p" class="section level2">
+<h2>Task8 (1p)</h2>
+<div id="simulate-a-set-of-independent-markers-using-the-the-multinomial-distribution-r-function-rmultinom-that-mimicks-the-myoglobin-data-in-terms-of-sample-size-number-of-snps-and-minor-allele-frequencies-assuming-hardyweinberg-equilibrium-that-is-simulate-the-markers-with-multinomial-probabilities-p2-2pq-and-q2-where-p-is-the-observed-minor-allele-frequency-create-haplotypes-on-the-basis-of-the-simulated-data.-do-you-find-the-same-number-of-haplotypes-can-you-explain-the-difference" class="section level4">
+<h4>Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2, 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference?</h4>
+<pre><code>## [1] &quot;The most likely haplotypic constitution for these ambiguous haplotypes (having alleles 'A' and 'B':&quot;</code></pre>
+<pre><code>##  [1] &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot;
+## [18] &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot;</code></pre>
+<pre><code>## [1] &quot;And its probability:&quot;</code></pre>
+<pre><code>## [1] 0.1637667</code></pre>
+<pre><code>## [1] &quot;Total haplotypes:&quot;</code></pre>
+<pre><code>## [1] 140</code></pre>
+<p>The results are very different. Previously under the same settings we found 6 probable haplotypes but now we see close to 130. This suggests that there is an association between different loci of myoglobin dataset (linkage disequilibrium) thus making some haplotypes more probable than others. In the simulated dataset we assumed no linkage (totally independent SNPs) and so we got more uniform distribution of haplotypes and their probabilities.</p>
 </div>
 </div>
 

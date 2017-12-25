@@ -7,9 +7,10 @@ output: html_document
 
 ```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(genetics)
 ```
 
-## Task1
+## Task1 (1p)
 #### Myoglobin is an oxygen-binding protein found in muscle tissue. The protein is encoded by the MB gene, which resides on the long arm of chromosome 22. The file MB.rda contains genotype information of unrelated individuals for a set of SNPs in the MB gene. The file contains genotype information in object Y. Load this data into the R environment.
 
 ```{r echo=FALSE, warning=FALSE}
@@ -17,8 +18,8 @@ load("MB.rda")
 ```
 
 
-## Task2
-####  (1p) How many individuals and how many SNPs are there in the database? What percentage of the data is missing? 
+## Task2 (1p)
+####  How many individuals and how many SNPs are there in the database? What percentage of the data is missing?
 
 ```{r echo=FALSE, warning=FALSE}
 print("Individual count:")
@@ -33,7 +34,7 @@ nas/total*100
 ```
 
 
-## Task3
+## Task3 (1p)
 #### Assuming all SNPs are bi-allelic, how many haplotypes can theoretically be found for this data set?
 
 ```{r echo=FALSE, warning=FALSE}
@@ -42,7 +43,7 @@ print("Theoretical number of haplotypes:")
 2**ncol(Y)
 ```
 
-## Task4
+## Task4 (2p)
 #### Estimate haplotype frequencies using the haplo.stats package (set the minimum posterior probability to 0.001). How many haplotypes do you find? List the haplotypes and their estimated probabilities. Which haplotype is the most common?
 
 ```{r echo=FALSE, warning=FALSE}
@@ -84,7 +85,7 @@ tail(out$hap.prob,1)
 ```
 
 
-## Task5
+## Task5 (2p)
 ####  Is the haplotypic constitution of any of the individuals in the database ambiguous or uncertain? If so, for which individuals? What is, in this case, the most likely haplotypic constitution of any possibly uncertain individuals?
 
 ```{r echo=FALSE, warning=FALSE}
@@ -123,7 +124,7 @@ ambi_out <-
 #as.character(haplo$haplotype[which.max(haplo$hap.prob), ])
 
 print("The most likely haplotypic constitution for these ambiguous haplotypes:")
-paste(tail(out$haplotype,1))
+paste(tail(ambi_out$haplotype,1))
 print("And its probability:")
 tail(ambi_out$hap.prob,1)
 
@@ -169,15 +170,15 @@ out_cut
 
 
 ## Task 7 (2p)
-#### We could consider the newly created haplotypes as the alleles of a new locus. Which is, under the assumption of Hardy-Weinberg equilibrium, the most likely genotype at this new locus? What is the probability of this genotype? Which genotype is the second most likely? 
+#### We could consider the newly created haplotypes as the alleles of a new locus. Which is, under the assumption of Hardy-Weinberg equilibrium, the most likely genotype at this new locus? What is the probability of this genotype? Which genotype is the second most likely?
 
-#### In this case we have 6-allele system. We can label fist haplotype as A allele, second as B .. 6th as F. In this case haplotypes' estimated frequencies would be corresponding allele frequencies. 
-#### Then, we would need to build a table 6 by 6 of genotype frequencies. But as we know, homozygotes AiAi will have frequency p(i)^2, and all heterozygotes AiAj will have frequency 2p(i)*p(j). 
+#### In this case we have 6-allele system. We can label fist haplotype as A allele, second as B .. 6th as F. In this case haplotypes' estimated frequencies would be corresponding allele frequencies.
+#### Then, we would need to build a table 6 by 6 of genotype frequencies. But as we know, homozygotes AiAi will have frequency p(i)^2, and all heterozygotes AiAj will have frequency 2p(i)*p(j).
 
 ```{r echo=FALSE, warning=FALSE}
 out
 ```
-#### As we can see, 6th (F) haplotype has frequency of 0.72, second most frequent haplotype 5 (E) has 0.17 frequency. 
+#### As we can see, 6th (F) haplotype has frequency of 0.72, second most frequent haplotype 5 (E) has 0.17 frequency.
 #### Obviously (as there is no other haplotype, for which frequency*2 would be more than 0.72), most frequent genotype would be FF with frequency
 ```{r echo=FALSE, warning=FALSE}
 out$hap.prob[6]*out$hap.prob[6]
@@ -186,39 +187,70 @@ out$hap.prob[6]*out$hap.prob[6]
 ```{r echo=FALSE, warning=FALSE}
 out$hap.prob[6]*out$hap.prob[5]
 ```
-#### So we don't see need to calculate all others. Most frequent genotype would be 66 (FF), second one - 65 (FE) 
+#### So we don't see need to calculate all others. Most frequent genotype would be 66 (FF), second one - 65 (FE)
 
 ## Task 8 (1p)
-#### 8. (1p) Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2 , 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference? 
-```{r echo=FALSE, warning=FALSE}
+#### Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2 , 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference?
 
+
+
+## Task8 (1p)
+#### Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2, 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference?
+
+```{r echo=FALSE, warning=FALSE, cache=FALSE}
+
+get_allele_freq <- function(x){
+  g <- genotype(x[!is.na(x)], sep="")
+  s <- summary(g)
+  allele_freq <- s$allele.freq[,'Proportion'][1]
+  return(c(allele_freq, 1 - allele_freq))
+}
+
+allele_freqs <- apply(Y, 2, get_allele_freq)
+
+
+get_geno_freqs <- function(x){
+  homoA <- x[2]**2
+  hetAB <- x[1]*x[2]
+  homoB <- x[1]**2
+  return(c(homoA, hetAB, homoB))
+}
+
+geno_freqs <- apply(allele_freqs, 2, get_geno_freqs)
+
+
+get_genotypes <- function(x){
+  probs <- x
+  genotype_col <- sample(c("AA", "AB", "BB"), size = nrow(Y), prob = probs, replace=TRUE)
+  return(genotype_col)
+}
+
+
+simulated_MBData <- apply(geno_freqs, 2, get_genotypes)
+
+Geno3 <- cbind(substr(simulated_MBData[,1],1,1),substr(simulated_MBData[,1],2,2))
+for(i in 2:ncol(simulated_MBData)) {
+  Geno3 <- cbind(Geno3,substr(simulated_MBData[,i],1,1),substr(simulated_MBData[,i],2,2))
+}
+
+
+snpnames <- paste("snp", 1:28,sep="")
+#length(snpnames)
+
+sim_out <-
+  haplo.em(Geno3,
+  locus.label = snpnames,
+  control = haplo.em.control(min.posterior = 1e-3))
+
+
+
+print("The most likely haplotypic constitution for these ambiguous haplotypes (having alleles 'A' and 'B':")
+paste(tail(sim_out$haplotype,1))
+print("And its probability:")
+tail(sim_out$hap.prob,1)
+print("Total haplotypes:")
+nrow(sim_out$haplotype)
 
 ```
 
-
-```{r echo=FALSE, warning=FALSE}
-
-
-
-```
-
-
-```{r echo=FALSE, warning=FALSE}
-
-
-
-```
-
-
-```{r echo=FALSE, warning=FALSE}
-
-
-
-```
-
-
-```{r echo=FALSE, warning=FALSE}
-
-
-
-```
+The results are very different. Previously under the same settings we found 6 probable haplotypes but now we see close to 130. This suggests that there is an association between different loci of myoglobin dataset (linkage disequilibrium) thus making some haplotypes more probable than others. In the simulated dataset we assumed no linkage (totally independent SNPs) and so we got more uniform distribution of haplotypes and their probabilities.
