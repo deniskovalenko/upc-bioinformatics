@@ -130,7 +130,16 @@ tail(out_cut$hap.prob,1)
 ```
 ## and actually we got same results
 
+
+## Task 7 (2p)
+#### We could consider the newly created haplotypes as the alleles of a new locus. Which is, under the assumption of Hardy-Weinberg equilibrium, the most likely genotype at this new locus? What is the probability of this genotype? Which genotype is the second most likely? 
+
 ```{r echo=FALSE, warning=FALSE}
 
+```
+
+## Task 8 (1p)
+#### 8. (1p) Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2 , 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference? 
+```{r echo=FALSE, warning=FALSE}
 
 ```
