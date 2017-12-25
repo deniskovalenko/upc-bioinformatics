@@ -66,7 +66,6 @@ for(i in 2:ncol(Y)) {
   Geno2 <- cbind(Geno2,substr(Y[,i],1,1),substr(Y[,i],2,2))
 }
 
-
 snpnames <- paste("snp", 1:28,sep="")
 
 out <-  haplo.em(Geno2,
@@ -75,11 +74,11 @@ out <-  haplo.em(Geno2,
 
 
 
-print("In total there are ")
+print("Total haplotypes:")
 nrow(out$haplotype)
-print("haplotypes with")
+print("Most popular haplotype:")
 paste(tail(out$haplotype,1))
-print("being the most popular haplotype with probability of")
+print("Probability of the most popular haplotype:")
 tail(out$hap.prob,1)
 
 ```
@@ -90,7 +89,43 @@ tail(out$hap.prob,1)
 
 ```{r echo=FALSE, warning=FALSE}
 
+#function to get heterozygous count per row in data
+hetero_count <- function(row){
+  row <- row[!is.na(row)]
+  res <- substr(row, 1, 1) != substr(row, 2, 2)
+  for(i in 2:length(row)){
+    append(res, substr(row[i], 1, 1) != substr(row[i], 2, 2))
+  }
+  return(sum(res))
+}
 
+
+counts <- apply(Y, 1, hetero_count)
+ambiguous <- counts[counts > 1]
+print("Individuals with ambiguous haplotypes:")
+names(ambiguous)
+
+ambi_haplo <- Y[counts > 1, ]
+ambi_geno <- cbind(substr(ambi_haplo[,1],1,1),substr(ambi_haplo[,1],2,2))
+for(i in 2:ncol(ambi_haplo)) {
+  ambi_geno <- cbind(ambi_geno,substr(ambi_haplo[,i],1,1),substr(ambi_haplo[,i],2,2))
+}
+
+
+
+
+snpnames2 <- paste("snp", 1:ncol(Y),sep="")
+ambi_out <-
+  haplo.em(ambi_geno,
+  locus.label = snpnames2,
+  control = haplo.em.control(min.posterior = 1e-3))
+
+#as.character(haplo$haplotype[which.max(haplo$hap.prob), ])
+
+print("The most likely haplotypic constitution for these ambiguous haplotypes:")
+paste(tail(out$haplotype,1))
+print("And its probability:")
+tail(ambi_out$hap.prob,1)
 
 ```
 
@@ -102,7 +137,8 @@ tail(out$hap.prob,1)
 ## Task 6. (1p)
 #### Suppose we would delete SNP rs5999890 from the database prior to haplotype estimation. Would this affect the results obtained? Justify your answer. Delete this SNP from the database and estimate again the haplotype frequencies. List the haplotypes and their estimated frequencies.
 
-##It shouldn't affect results, cause SNP rs5999890 has only CC values, so it doesn't change possible haplotypes.
+It shouldn't affect results, cause SNP rs5999890 has only CC values, so it doesn't change possible haplotypes.
+
 ```{r echo=FALSE, warning=FALSE}
 Y_cut <- Y[,-5]
 
@@ -120,15 +156,21 @@ out_cut <-  haplo.em(Geno2_cut,
 
 
 
-print("In total there are ")
+print("Testing the hypothesis...")
+print("Total haplotypes:")
 nrow(out_cut$haplotype)
-print("haplotypes with")
+print("Most popular haplotype:")
 paste(tail(out_cut$haplotype,1))
-print("being the most popular haplotype with probability of")
+print("Probability of the most popular haplotype:")
 tail(out_cut$hap.prob,1)
-
 ```
-## and actually we got same results
+
+The test proves that actually we got same results.
+
+```{r echo=FALSE, warning=FALSE}
+print("Listing haplotypes and their estimated frequencies:")
+out_cut
+```
 
 
 ## Task 7 (2p)
@@ -141,5 +183,34 @@ tail(out_cut$hap.prob,1)
 ## Task 8 (1p)
 #### 8. (1p) Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2 , 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference? 
 ```{r echo=FALSE, warning=FALSE}
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+
 
 ```
