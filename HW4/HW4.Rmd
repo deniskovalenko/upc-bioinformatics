@@ -189,11 +189,6 @@ out$hap.prob[6]*out$hap.prob[5]
 ```
 #### So we don't see need to calculate all others. Most frequent genotype would be 66 (FF), second one - 65 (FE)
 
-## Task 8 (1p)
-#### Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2 , 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference?
-
-
-
 ## Task8 (1p)
 #### Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2, 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference?
 
@@ -253,4 +248,4 @@ nrow(sim_out$haplotype)
 
 ```
 
-The results are very different. Previously under the same settings we found 6 probable haplotypes but now we see close to 130. This suggests that there is an association between different loci of myoglobin dataset (linkage disequilibrium) thus making some haplotypes more probable than others. In the simulated dataset we assumed no linkage (totally independent SNPs) and so we got more uniform distribution of haplotypes and their probabilities.
+#### The results are very different. Previously under the same settings we found 6 probable haplotypes but now we see close to 130. This suggests that there is an association between different loci of myoglobin dataset (linkage disequilibrium) thus making some haplotypes more probable than others. In the simulated dataset we assumed no linkage (totally independent SNPs) and so we got more uniform distribution of haplotypes and their probabilities.
