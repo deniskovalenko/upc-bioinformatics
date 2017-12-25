@@ -1,5 +1,5 @@
 ---
-title: "BSG HW4"
+title: "Bioinformatics and Statistical Genetics (taught by Jan Graffelman), HW4, Haplotype estimation"
 author: "Sten-Oliver Salumaa, Denys Kovalenko"
 date: "13 December 2017"
 output: html_document
@@ -172,22 +172,27 @@ out_cut
 ## Task 7 (2p)
 #### We could consider the newly created haplotypes as the alleles of a new locus. Which is, under the assumption of Hardy-Weinberg equilibrium, the most likely genotype at this new locus? What is the probability of this genotype? Which genotype is the second most likely?
 
-#### In this case we have 6-allele system. We can label fist haplotype as A allele, second as B .. 6th as F. In this case haplotypes' estimated frequencies would be corresponding allele frequencies.
-#### Then, we would need to build a table 6 by 6 of genotype frequencies. But as we know, homozygotes AiAi will have frequency p(i)^2, and all heterozygotes AiAj will have frequency 2p(i)*p(j).
+In this case we have 6-allele system. We can label fist haplotype as A allele, second as B .. 6th as F. In this case haplotypes' estimated frequencies would be corresponding allele frequencies.
+Then, we would need to build a table 6 by 6 of genotype frequencies. But as we know, homozygotes AiAi will have frequency p(i)^2, and all heterozygotes AiAj will have frequency 2p(i)*p(j).
 
 ```{r echo=FALSE, warning=FALSE}
 out
 ```
-#### As we can see, 6th (F) haplotype has frequency of 0.72, second most frequent haplotype 5 (E) has 0.17 frequency.
-#### Obviously (as there is no other haplotype, for which frequency*2 would be more than 0.72), most frequent genotype would be FF with frequency
+
+As we can see, 6th (F) haplotype has frequency of 0.72, second most frequent haplotype 5 (E) has 0.17 frequency.
+Obviously (as there is no other haplotype, for which frequency*2 would be more than 0.72), most frequent genotype would be FF with frequency
+
 ```{r echo=FALSE, warning=FALSE}
 out$hap.prob[6]*out$hap.prob[6]
 ```
-#### second most frequent would be F with second most frequent allele - E.
+
+second most frequent would be F with second most frequent allele - E.
+
 ```{r echo=FALSE, warning=FALSE}
 out$hap.prob[6]*out$hap.prob[5]
 ```
-#### So we don't see need to calculate all others. Most frequent genotype would be 66 (FF), second one - 65 (FE)
+
+So we don't see need to calculate all others. Most frequent genotype would be 66 (FF), second one - 65 (FE)
 
 ## Task8 (1p)
 #### Simulate a set of independent markers using the the multinomial distribution (R function rmultinom) that mimicks the Myoglobin data in terms of sample size, number of SNPs and minor allele frequencies, assuming HardyWeinberg equilibrium (that is, simulate the markers with multinomial probabilities p2, 2pq and q2, where p is the observed minor allele frequency) Create haplotypes on the basis of the simulated data. Do you find the same number of haplotypes? Can you explain the difference?
@@ -248,4 +253,4 @@ nrow(sim_out$haplotype)
 
 ```
 
-#### The results are very different. Previously under the same settings we found 6 probable haplotypes but now we see close to 130. This suggests that there is an association between different loci of myoglobin dataset (linkage disequilibrium) thus making some haplotypes more probable than others. In the simulated dataset we assumed no linkage (totally independent SNPs) and so we got more uniform distribution of haplotypes and their probabilities.
+The results are very different. Previously under the same settings we found 6 probable haplotypes but now we see close to 130. This suggests that there is an association between different loci of myoglobin dataset (linkage disequilibrium) thus making some haplotypes more probable than others. In the simulated dataset we assumed no linkage (totally independent SNPs) and so we got more uniform distribution of haplotypes and their probabilities.
