@@ -1,0 +1,132 @@
+---
+title: "Bioinformatics and Statistical Genetics (taught by Jan Graffelman), HW5, Population Substructure"
+author: "Sten-Oliver Salumaa, Denys Kovalenko"
+date: "11 January 2017"
+output: html_document
+---
+
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(genetics)
+```
+
+## Task1
+#### The file SNPChr20.rda contains genotype information of 310 individuals of unknown background. The genotype information concerns 50.000 SNPs on chromosome 20. Load this data into the R environment. The data file contains a matrix Y containing the allele counts (0,1 or 2) for 50.000 SNPs for one of the alleles of each SNP
+
+```{r echo=FALSE, warning=FALSE}
+load("SNPChr20.rda")
+```
+
+
+## Task 2
+#### Compute the Manhattan distance matrix between the 310 individuals (this may take a few minutes) Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report
+
+```{r echo=FALSE, warning=FALSE}
+dim(Y)
+Y[1:5, 1:5]
+ 
+D <- as.matrix(dist(Y), method="manhattan")
+D[1:5, 1:5]
+```
+
+## Task 3
+#### Use metric multidimensional scaling to obtain a map of the individuals, and include your map in your report. Do you think the data come from one homogeneous population?
+
+```{r echo=FALSE, warning=FALSE}
+D2 <- as.matrix(dist(Y))
+
+n <- nrow(Y)
+mds.out <- cmdscale(D2, k=n-1, eig=TRUE)
+X <- mds.out$points[,1:2]
+plot(X[,1],X[,2], asp=1, xlab = "First principal axis", ylab="Second principal axis")
+```
+
+This map clearly shows that there are different populations involved. This data did not come from a homogenous population.
+
+
+## Task 4
+####  Report the eigenvalues of the solution
+
+```{r echo=FALSE, warning=FALSE}
+mds.out$eig
+```
+
+## Task 5
+####  Is the distance matrix you have used an Euclidean distance matrix?
+
+For the values in Task 2 we used Manhattan distance and for the calculations to plot the multidimensional scaling results we used euclidian distance.
+
+
+## Task 6
+#### What is the goodness-of-fit of a two-dimensional approximation to your distance matrix? 
+
+```{r echo=FALSE, warning=FALSE}
+mds.out.out$GOF
+```
+
+## Task 7
+#### Make a plot of the estimated distances (according to your map of individuals) versus the observed distances. Regress estimated distances on observed distances and report the coefficient of determination of the regression
+
+```{r echo=FALSE, warning=FALSE}
+Dest <- as.matrix(dist(X)) # creates all distances between points I have on my computer screen
+
+Dobs.vec <- D2[lower.tri(D2)] #gives an indicator matrix whether a particular entry is below diagonal or no
+Dest.vec <- Dest[lower.tri(Dest)] # returns values only below the diagonal
+
+
+plot(Dobs.vec, Dest.vec, xlab="Observed", ylab="fitted")
+
+length(Dobs.vec)
+length(Dest.vec)
+
+#plot(cumsum(mds.out$eig) / sum(mds.out$eig), 
+#       xlab="Number of dimensions", 
+#       ylab=expression(R^2))
+
+
+print("R square value: ")
+mds.out$eig[2] / sum(mds.out$eig)
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+
+```
+
