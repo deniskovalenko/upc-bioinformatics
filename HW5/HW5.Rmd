@@ -23,27 +23,18 @@ load("SNPChr20.rda")
 #### Compute the Manhattan distance matrix between the 310 individuals (this may take a few minutes) Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report
 
 ```{r echo=FALSE, warning=FALSE}
-#dim(Y)
-#Y[1:5, 1:5]
-dist_Y_man <- dist(Y, method="manhattan", diag = FALSE)
-D <- as.matrix(dist_Y_man)
-#following the definition above
-#manhattan_distance <- function(p,q){
-#  sum(abs(p-q))
-#}
-#manhattan distance from 6 to 7
-#manhattan_distance(as.numeric(Y[1,]),as.numeric(Y[2,]))
-#sum(abs(as.numeric(Y[1,]) - as.numeric(Y[2,])), na.rm = TRUE)
+dim(Y)
+Y[1:5, 1:5]
+ 
+D <- as.matrix(dist(Y), method="manhattan")
 D[1:5, 1:5]
-
 ```
 
 ## Task 3
 #### Use metric multidimensional scaling to obtain a map of the individuals, and include your map in your report. Do you think the data come from one homogeneous population?
 
 ```{r echo=FALSE, warning=FALSE}
-dist_Y_euc <- dist(Y)
-D2 <- as.matrix(dist_Y_euc) # why using euclidean here?
+D2 <- as.matrix(dist(Y))
 
 n <- nrow(Y)
 mds.out <- cmdscale(D2, k=n-1, eig=TRUE)
@@ -51,7 +42,7 @@ X <- mds.out$points[,1:2]
 plot(X[,1],X[,2], asp=1, xlab = "First principal axis", ylab="Second principal axis")
 ```
 
-This map clearly shows that there are different populations involved. This data did not come from a homogenous population.
+This map clearly shows that there are 3 different population groups involved. This data did not come from a homogenous population.
 
 
 ## Task 4
@@ -64,16 +55,7 @@ mds.out$eig
 ## Task 5
 ####  Is the distance matrix you have used an Euclidean distance matrix?
 
-
-
 For the values in Task 2 we used Manhattan distance and for the calculations to plot the multidimensional scaling results we used euclidian distance.
-
-```{r echo=FALSE, warning=FALSE}
-library(ade4)
-Y[1:5, 1:5]
-D2 <- dist_Y_euc
-is.euclid(D2)# True, but not sure if it should be
-```
 
 
 ## Task 6
@@ -88,8 +70,6 @@ mds.out$GOF
 
 ```{r echo=FALSE, warning=FALSE}
 Dest <- as.matrix(dist(X)) # creates all distances between points I have on my computer screen
-is.euclid(dist(X))
-is.euclid(dist_Y_euc)
 
 Dobs.vec <- D2[lower.tri(D2)] #gives an indicator matrix whether a particular entry is below diagonal or no
 Dest.vec <- Dest[lower.tri(Dest)] # returns values only below the diagonal
@@ -97,17 +77,28 @@ Dest.vec <- Dest[lower.tri(Dest)] # returns values only below the diagonal
 
 plot(Dobs.vec, Dest.vec, xlab="Observed", ylab="fitted")
 
-# regressing 
-regr <- lm(Dobs.vec ~ Dest.vec)
-summary(regr)$r.squared
+length(Dobs.vec)
+length(Dest.vec)
 
-
-
-
+#plot(cumsum(mds.out$eig) / sum(mds.out$eig), 
+#       xlab="Number of dimensions", 
+#       ylab=expression(R^2))
 ```
+```{r echo=FALSE, warning=FALSE}
+print("R square value: ")
+mds.out$eig[2] / sum(mds.out$eig)
+```
+
+## Task 8
+####
 
 
 ```{r echo=FALSE, warning=FALSE}
+library(MASS)
+?isoMDS
+set.seed(105)
+yinit <- matrix(runif(2*n),ncol=2)
+nmds.out <- isoMDS(D,k=2,y=yinit)
 
 ```
 
