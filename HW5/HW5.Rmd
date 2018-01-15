@@ -81,7 +81,8 @@ Here we are applying the same 'cmdscale' function to the previously calculated e
 
 ```{r echo=FALSE, warning=FALSE}
 mds.out.2d <- cmdscale(D2, k=2, eig=TRUE)
-mds.out.2d$GOF
+gof <- mds.out.2d$GOF
+print(round(gof,digits=4))
 ```
 
 ## Task 7
