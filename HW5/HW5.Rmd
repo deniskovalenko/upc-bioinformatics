@@ -116,7 +116,7 @@ summary(regr)$r.squared
 library(MASS)
 ?isoMDS
 set.seed(105)
-yinit <- matrix(runif(2*n),ncol=2)
+yinit <- scale(matrix(runif(2*n),ncol=2),scale = FALSE)
 nmds.out_r <- isoMDS(D,k=2,y=yinit)
 plot(nmds.out_r$points[,1], nmds.out_r$points[,2], xlab = "1st PC", ylab = "2nd PC")
 
