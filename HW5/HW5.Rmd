@@ -145,12 +145,19 @@ regr <- lm(Dobs.vec ~ Dest_nm.vec)
 print("R-squared value: ")
 summary(regr)$r.squared
 ```
-R^2 is same for metric and non-metric scaling, and fit seems to be the same. Plots look the same.
+Plots look the same, but R^2 is lower for Non-metric scaling, which ??????????????????????
 
+## Task 10(1p) Compute the stress for a 1, 2, 3, 4, . . . , n-dimensional solution, always using the classical MDS solution as an initial configuration. How many dimensions are necessary to obtain a good representation? Make a plot of the stress against the number of dimensions
 ```{r echo=FALSE, warning=FALSE}
-
+dimensions = seq(1, 40)
+stress_l <- NULL
+set.seed(105)
+for(i in 1:length(dimensions)) {
+  stress_l[i] <- isoMDS(D,k=i)$stress
+}
+plot(dimensions, stress_l, xlab="dimensions", ylab="stress", main="Stress over dimensions")
 ```
-
+After 15, stress decreases more slowly. Altough on observable dimensions rate of decrease stays the same value of stress itself is pretty low at 30 already.
 
 ```{r echo=FALSE, warning=FALSE}
 
