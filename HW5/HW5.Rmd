@@ -117,7 +117,7 @@ summary(regr)$r.squared
 library(MASS)
 ?isoMDS
 set.seed(105)
-yinit <- matrix(runif(2*n),ncol=2)
+yinit <- scale(matrix(runif(2*n),ncol=2),scale = FALSE)
 nmds.out_r <- isoMDS(D,k=2,y=yinit)
 plot(nmds.out_r$points[,1], nmds.out_r$points[,2], xlab = "1st PC", ylab = "2nd PC")
 
@@ -129,12 +129,24 @@ nmds.out_cl <- isoMDS(D, k=2)
 plot(nmds.out_cl$points[,1], nmds.out_cl$points[,2], xlab = "1st PC", ylab = "2nd PC", main="Fitted configuration with classical solution as init conf")
 ```
 
-##
+## No, we got to see 3 clusters with NMDS for both classical and and random initial solutions, which supports that data comes not from one homogeneous population.
+
+
+## Task 9.
+#### (1p) Make again a plot of the estimated distances (according to your map of individuals) versus the observed distances, now for the two-dimensional solution of non-metric MDS. Regress estimated distances on observed distances and report the coefficient of determination of the regression. Is the fit better or worse than with metric MDS?
 
 ```{r echo=FALSE, warning=FALSE}
-
+Dest_nm <- as.matrix(dist(nmds.out_cl$points[,1:2]))
+Dest_nm.vec <- Dest_nm[lower.tri(Dest_nm)] 
+plot(Dobs.vec, Dest_nm.vec, xlab="Observed", ylab="fitted")
 ```
-
+```{r echo=FALSE, warning=FALSE}
+# regressing
+regr <- lm(Dobs.vec ~ Dest_nm.vec)
+print("R-squared value: ")
+summary(regr)$r.squared
+```
+R^2 is same for metric and non-metric scaling, and fit seems to be the same. Plots look the same.
 
 ```{r echo=FALSE, warning=FALSE}
 
