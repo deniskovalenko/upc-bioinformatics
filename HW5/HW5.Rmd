@@ -118,14 +118,14 @@ library(MASS)
 ?isoMDS
 set.seed(105)
 yinit <- scale(matrix(runif(2*n),ncol=2),scale = FALSE)
-nmds.out_r <- isoMDS(D,k=2,y=yinit)
+nmds.out_r <- isoMDS(D2,k=2,y=yinit)
 plot(nmds.out_r$points[,1], nmds.out_r$points[,2], xlab = "1st PC", ylab = "2nd PC")
 
 ```
 
 
 ```{r echo=FALSE, warning=FALSE}
-nmds.out_cl <- isoMDS(D, k=2)
+nmds.out_cl <- isoMDS(D2, k=2)
 plot(nmds.out_cl$points[,1], nmds.out_cl$points[,2], xlab = "1st PC", ylab = "2nd PC", main="Fitted configuration with classical solution as init conf")
 ```
 
@@ -133,20 +133,23 @@ plot(nmds.out_cl$points[,1], nmds.out_cl$points[,2], xlab = "1st PC", ylab = "2n
 
 
 ## Task 9.
-#### (1p) Make again a plot of the estimated distances (according to your map of individuals) versus the observed distances, now for the two-dimensional solution of non-metric MDS. Regress estimated distances on observed distances and report the coefficient of determination of the regression. Is the fit better or worse than with metric MDS?
+#### (1p) Make again a plot of the estimated distances (according to your map of individuals) versus the observed distances, now for the two-dimensional solution of non-metric MDS. 
 
 ```{r echo=FALSE, warning=FALSE}
 Dest_nm <- as.matrix(dist(nmds.out_cl$points[,1:2]))
 Dest_nm.vec <- Dest_nm[lower.tri(Dest_nm)] 
 plot(Dobs.vec, Dest_nm.vec, xlab="Observed", ylab="fitted")
 ```
+#### Regress estimated distances on observed distances and report the coefficient of determination of the regression. Is the fit better or worse than with metric MDS?
+
 ```{r echo=FALSE, warning=FALSE}
 # regressing
 regr <- lm(Dobs.vec ~ Dest_nm.vec)
 print("R-squared value: ")
 summary(regr)$r.squared
 ```
-Plots look the same, but R^2 is lower for Non-metric scaling, which ??????????????????????
+
+The fit is as good as with metric MDS.
 
 ## Task 10(1p) Compute the stress for a 1, 2, 3, 4, . . . , n-dimensional solution, always using the classical MDS solution as an initial configuration. How many dimensions are necessary to obtain a good representation? Make a plot of the stress against the number of dimensions
 ```{r echo=FALSE, warning=FALSE}
