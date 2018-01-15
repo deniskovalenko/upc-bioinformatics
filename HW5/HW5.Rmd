@@ -1,8 +1,11 @@
 ---
-title: "Bioinformatics and Statistical Genetics (taught by Jan Graffelman), HW5, Population Substructure"
+title: Bioinformatics and Statistical Genetics (taught by Jan Graffelman), HW5, Population
+  Substructure
 author: "Sten-Oliver Salumaa, Denys Kovalenko"
 date: "11 January 2017"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 
@@ -68,7 +71,7 @@ mds.out$eig
 For the values in Task 2 we used Manhattan distance and for the calculations to plot the multidimensional scaling results we used euclidian distance.
 Also, the function 'is.euclid' from library 'ade4' confirms our answer.
 
-```{r warning=FALSE}
+```{r echo=TRUE, warning=FALSE}
 library(ade4)
 D2 <- dist_Y_euc
 is.euclid(D2)
@@ -115,7 +118,7 @@ summary(regr)$r.squared
 
 ```{r echo=FALSE, warning=FALSE}
 library(MASS)
-?isoMDS
+#?isoMDS
 set.seed(105)
 yinit <- scale(matrix(runif(2*n),ncol=2),scale = FALSE)
 nmds.out_r <- isoMDS(D2,k=2,y=yinit)
@@ -129,7 +132,7 @@ nmds.out_cl <- isoMDS(D2, k=2)
 plot(nmds.out_cl$points[,1], nmds.out_cl$points[,2], xlab = "1st PC", ylab = "2nd PC", main="Fitted configuration with classical solution as init conf")
 ```
 
-## No, we got to see 3 clusters with NMDS for both classical and and random initial solutions, which supports that data comes not from one homogeneous population.
+No, we got to see 3 clusters with NMDS for both classical and and random initial solutions, which supports that data comes not from one homogeneous population.
 
 
 ## Task 9.
@@ -140,6 +143,7 @@ Dest_nm <- as.matrix(dist(nmds.out_cl$points[,1:2]))
 Dest_nm.vec <- Dest_nm[lower.tri(Dest_nm)] 
 plot(Dobs.vec, Dest_nm.vec, xlab="Observed", ylab="fitted")
 ```
+
 #### Regress estimated distances on observed distances and report the coefficient of determination of the regression. Is the fit better or worse than with metric MDS?
 
 ```{r echo=FALSE, warning=FALSE}
@@ -152,7 +156,8 @@ summary(regr)$r.squared
 The fit is as good as with metric MDS.
 
 ## Task 10(1p) Compute the stress for a 1, 2, 3, 4, . . . , n-dimensional solution, always using the classical MDS solution as an initial configuration. How many dimensions are necessary to obtain a good representation? Make a plot of the stress against the number of dimensions
-```{r echo=FALSE, warning=FALSE}
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 dimensions = seq(1, 40)
 stress_l <- NULL
 set.seed(105)
@@ -161,12 +166,14 @@ for(i in 1:length(dimensions)) {
 }
 plot(dimensions, stress_l, xlab="dimensions", ylab="stress", main="Stress over dimensions")
 ```
+
 After 15, stress decreases more slowly. Altough on observable dimensions rate of decrease stays the same value of stress itself is pretty low at 30 already.
 
 
 
 ## Task 11. 
 #### Compute the correlation matrix between the first two dimensions of a metric MDS and the two-dimensional solution of a non-metric MDS. Make a scatterplot matrix of the 4 variables. Comment on your findings 
+
 ```{r echo=FALSE, warning=FALSE}
 p <- NULL
 p$pc1m = X[,1]
@@ -186,8 +193,10 @@ pairs(p, main="scatterolot matrix")
 ```
 
 
+Metric and non-metric are clearly very strongly correlated. We can even see that in this case it could be even said that they're the same.Both show 3 homogeneous clusters so dataset is heterogenous.
+
 ```{r echo=FALSE, warning=FALSE}
-corr_matrix
+#corr_matrix
 ```
 
 
