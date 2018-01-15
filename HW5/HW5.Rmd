@@ -163,13 +163,31 @@ plot(dimensions, stress_l, xlab="dimensions", ylab="stress", main="Stress over d
 ```
 After 15, stress decreases more slowly. Altough on observable dimensions rate of decrease stays the same value of stress itself is pretty low at 30 already.
 
-```{r echo=FALSE, warning=FALSE}
 
+
+## Task 11. 
+#### Compute the correlation matrix between the first two dimensions of a metric MDS and the two-dimensional solution of a non-metric MDS. Make a scatterplot matrix of the 4 variables. Comment on your findings 
+```{r echo=FALSE, warning=FALSE}
+p <- NULL
+p$pc1m = X[,1]
+p$pc2m = X[,2]
+p$pc1nm = nmds.out_cl$points[,1]
+p$pc2nm = nmds.out_cl$points[,2]
+
+corr_matrix = matrix(data = 0, nrow=2, ncol=2)
+corr_matrix[1,1] = cor(p$pc1m, p$pc1nm)
+corr_matrix[1,2] = cor(p$pc1m, p$pc2nm)
+corr_matrix[2,1] = cor(p$pc2m, p$pc1nm)
+corr_matrix[2,2] = cor(p$pc2m, p$pc2nm)
+
+
+
+pairs(p, main="scatterolot matrix")
 ```
 
 
 ```{r echo=FALSE, warning=FALSE}
-
+corr_matrix
 ```
 
 
