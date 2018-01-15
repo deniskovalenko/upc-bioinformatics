@@ -20,7 +20,7 @@ load("SNPChr20.rda")
 
 
 ## Task 2
-#### Compute the Manhattan distance matrix between the 310 individuals (this may take a few minutes) Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report-
+#### Compute the Manhattan distance matrix between the 310 individuals (this may take a few minutes) Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report
 
 ```{r echo=FALSE, warning=FALSE}
 #dim(Y)
@@ -52,7 +52,7 @@ X <- mds.out$points[,1:2]
 plot(X[,1],X[,2], asp=1, xlab = "First principal axis", ylab="Second principal axis")
 ```
 
-This map clearly shows that there are different populations involved. This data did not come from a homogenous population.
+This map clearly shows that there are 3 different population groups involved. This data did not come from a homogenous population.
 
 
 ## Task 4
@@ -86,7 +86,7 @@ print(round(gof,digits=4))
 ```
 
 ## Task 7
-#### Make a plot of the estimated distances (according to your map of individuals) versus the observed distances. 
+#### Make a plot of the estimated distances (according to your map of individuals) versus the observed distances.
 
 ```{r echo=FALSE, warning=FALSE}
 Dest <- as.matrix(dist(X)) # creates all distances between points I have on my computer screen
@@ -104,17 +104,32 @@ plot(Dobs.vec, Dest.vec, xlab="Observed", ylab="fitted")
 #### Regress estimated distances on observed distances and report the coefficient of determination of the regression
 
 ```{r echo=FALSE, warning=FALSE}
-# regressing 
+# regressing
 regr <- lm(Dobs.vec ~ Dest.vec)
 print("R-squared value: ")
 summary(regr)$r.squared
 ```
 
+## Task 8
+#### Try now non-metric multidimensional scaling with your distance matrix. Use both a random initial configuration as well as the classical metric solution as an initial solution. Make a plot of the two-dimensional solution. Do the results support that the data come from one homogeneous population?
 
 ```{r echo=FALSE, warning=FALSE}
+library(MASS)
+?isoMDS
+set.seed(105)
+yinit <- matrix(runif(2*n),ncol=2)
+nmds.out_r <- isoMDS(D,k=2,y=yinit)
+plot(nmds.out_r$points[,1], nmds.out_r$points[,2], xlab = "1st PC", ylab = "2nd PC")
 
 ```
 
+
+```{r echo=FALSE, warning=FALSE}
+nmds.out_cl <- isoMDS(D, k=2)
+plot(nmds.out_cl$points[,1], nmds.out_cl$points[,2], xlab = "1st PC", ylab = "2nd PC", main="Fitted configuration with classical solution as init conf")
+```
+
+##
 
 ```{r echo=FALSE, warning=FALSE}
 
