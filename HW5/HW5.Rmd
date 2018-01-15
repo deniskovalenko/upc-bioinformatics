@@ -90,23 +90,25 @@ mds.out$eig[2] / sum(mds.out$eig)
 ```
 
 ## Task 8
-####
-
+#### Try now non-metric multidimensional scaling with your distance matrix. Use both a random initial configuration as well as the classical metric solution as an initial solution. Make a plot of the two-dimensional solution. Do the results support that the data come from one homogeneous population? 
 
 ```{r echo=FALSE, warning=FALSE}
 library(MASS)
 ?isoMDS
 set.seed(105)
 yinit <- matrix(runif(2*n),ncol=2)
-nmds.out <- isoMDS(D,k=2,y=yinit)
+nmds.out_r <- isoMDS(D,k=2,y=yinit)
+plot(nmds.out_r$points[,1], nmds.out_r$points[,2], xlab = "1st PC", ylab = "2nd PC")
 
 ```
 
 
 ```{r echo=FALSE, warning=FALSE}
-
+nmds.out_cl <- isoMDS(D, k=2)
+plot(nmds.out_cl$points[,1], nmds.out_cl$points[,2], xlab = "1st PC", ylab = "2nd PC", main="Fitted configuration with classical solution as init conf")
 ```
 
+## 
 
 ```{r echo=FALSE, warning=FALSE}
 
