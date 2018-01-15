@@ -20,7 +20,7 @@ load("SNPChr20.rda")
 
 
 ## Task 2
-#### Compute the Manhattan distance matrix between the 310 individuals (this may take a few minutes) Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report
+#### Compute the Manhattan distance matrix between the 310 individuals (this may take a few minutes) Include a submatrix of dimension 5 by 5 with the distances between the first 5 individuals in your report-
 
 ```{r echo=FALSE, warning=FALSE}
 #dim(Y)
@@ -34,6 +34,7 @@ D <- as.matrix(dist_Y_man)
 #manhattan distance from 6 to 7
 #manhattan_distance(as.numeric(Y[1,]),as.numeric(Y[2,]))
 #sum(abs(as.numeric(Y[1,]) - as.numeric(Y[2,])), na.rm = TRUE)
+print("First 5 rows and columns of manhattan distance calculations: ")
 D[1:5, 1:5]
 
 ```
@@ -64,32 +65,32 @@ mds.out$eig
 ## Task 5
 ####  Is the distance matrix you have used an Euclidean distance matrix?
 
-
-
 For the values in Task 2 we used Manhattan distance and for the calculations to plot the multidimensional scaling results we used euclidian distance.
+Also, the function 'is.euclid' from library 'ade4' confirms our answer.
 
-```{r echo=FALSE, warning=FALSE}
+```{r warning=FALSE}
 library(ade4)
-Y[1:5, 1:5]
 D2 <- dist_Y_euc
-is.euclid(D2)# True, but not sure if it should be
+is.euclid(D2)
 ```
 
 
 ## Task 6
-#### What is the goodness-of-fit of a two-dimensional approximation to your distance matrix? 
+#### What is the goodness-of-fit of a two-dimensional approximation to your distance matrix?
+Here we are applying the same 'cmdscale' function to the previously calculated eucledian distances but this time with 'k' value as 2. Reporting the GOF:
 
 ```{r echo=FALSE, warning=FALSE}
-mds.out$GOF
+mds.out.2d <- cmdscale(D2, k=2, eig=TRUE)
+mds.out.2d$GOF
 ```
 
 ## Task 7
-#### Make a plot of the estimated distances (according to your map of individuals) versus the observed distances. Regress estimated distances on observed distances and report the coefficient of determination of the regression
+#### Make a plot of the estimated distances (according to your map of individuals) versus the observed distances. 
 
 ```{r echo=FALSE, warning=FALSE}
 Dest <- as.matrix(dist(X)) # creates all distances between points I have on my computer screen
-is.euclid(dist(X))
-is.euclid(dist_Y_euc)
+#is.euclid(dist(X)) # TRUE
+#is.euclid(dist_Y_euc) # TRUE
 
 Dobs.vec <- D2[lower.tri(D2)] #gives an indicator matrix whether a particular entry is below diagonal or no
 Dest.vec <- Dest[lower.tri(Dest)] # returns values only below the diagonal
@@ -97,18 +98,15 @@ Dest.vec <- Dest[lower.tri(Dest)] # returns values only below the diagonal
 
 plot(Dobs.vec, Dest.vec, xlab="Observed", ylab="fitted")
 
-# regressing 
-regr <- lm(Dobs.vec ~ Dest.vec)
-summary(regr)$r.squared
-
-
-
-
 ```
 
+#### Regress estimated distances on observed distances and report the coefficient of determination of the regression
 
 ```{r echo=FALSE, warning=FALSE}
-
+# regressing 
+regr <- lm(Dobs.vec ~ Dest.vec)
+print("R-squared value: ")
+summary(regr)$r.squared
 ```
 
 
